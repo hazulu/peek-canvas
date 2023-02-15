@@ -7,7 +7,7 @@ type CanvasProps = {
 
 const Canvas: FunctionComponent<CanvasProps> = ({application}: CanvasProps) => {
 
-    const containerRef = useRef(null);
+    const containerRef = useRef();
 
     const init = () => {
         application.start(async (view: HTMLWebViewElement) => {

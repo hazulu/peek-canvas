@@ -28,7 +28,7 @@ function App() {
   return (
     <div className="App flex flex-col min-h-screen bg-slate-200">
       <div>
-        {/* <Canvas application={application} /> */}
+        <Canvas application={application} />
         <Toolbar />
       </div>
     </div>

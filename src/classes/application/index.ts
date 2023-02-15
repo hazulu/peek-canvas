@@ -1,6 +1,8 @@
 import { Application, settings, SCALE_MODES, Point } from 'pixi.js'
+import { ShaderSystem } from "@pixi/core";
+import { install } from "@pixi/unsafe-eval";
 import { Viewport } from 'pixi-viewport'
-import FeatureApplicationCanvas from 'Components/canvas'
+import FeatureApplicationCanvas from '../canvas'
 
 type FeatureApplicationOptions = {
 }
@@ -11,11 +13,14 @@ const DOCUMENT_HEIGHT: number = 1000;
 export default class FeatureApplication {
 
     #application: Application;
-    #canvas: any;
+    #canvas: FeatureApplicationCanvas;
     #viewport: Viewport;
     ready: Boolean = false;
 
     constructor(width: number, height: number, options: FeatureApplicationOptions | null) {
+
+        // Install Unsafe-eval Fix For Pixi.js
+        install({ ShaderSystem });
 
         this.#application = new Application({
             width,
@@ -25,21 +30,21 @@ export default class FeatureApplication {
             autoDensity: true
         });
 
-        this.#application.renderer.on("resize", (e) => {
-            console.log('resized!!!')
-
-            const { clientWidth, clientHeight } = this.#application.view.parentNode;
-            
-            this.#application.resize();
-            this.#viewport.resize(clientWidth, clientHeight);
-        });
-
         // settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
         this.#canvas = new FeatureApplicationCanvas();
 
         this.#viewport = this.buildViewport(width, height);
         this.#viewport.addChild(this.#canvas.getScene());
+
+        this.#application.renderer.on("resize", (e) => {
+            console.log('resized!!!')
+
+            const { clientWidth, clientHeight } = this.#application.view.parentNode;
+
+            this.#application.resize();
+            this.#viewport.resize(clientWidth, clientHeight);
+        });
 
         this.update();
     }
