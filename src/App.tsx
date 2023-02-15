@@ -1,33 +1,35 @@
 import nodeLogo from "./assets/node.svg"
-import { useState } from 'react'
-import './App.scss'
+import { useState, useEffect } from 'react'
+import './App.css'
+import Canvas from 'Components/canvas'
+import Toolbar from 'Components/toolbar'
+import FeatureApplication from "./classes/application"
 
-console.log('[App.tsx]', `Hello world from Electron ${process.versions.electron}!`)
+const application = new FeatureApplication(600, 400, {})
 
 function App() {
   const [count, setCount] = useState(0)
+  const [clipboardImg, setClipboardImg] = useState(null)
+
+  // useEffect(() => {
+  //   window.addEventListener("paste", (e) => {
+      
+  //   });
+
+  //   return () => window.removeEventListener("paste");
+  // }, []);
+
+  const incrementCount = (): void => {
+    setCount((count) => count + 1)
+    console.log(count)
+    window.electronAPI.setTitle(count)
+  }
 
   return (
-    <div className="App">
+    <div className="App flex flex-col min-h-screen bg-slate-200">
       <div>
-        <a href="https://github.com/electron-vite/electron-vite-react" target="_blank">
-          <img src="./electron-vite.svg" className="logo" alt="Electron + Vite logo" />
-        </a>
-      </div>
-      <h1>Electron + Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Electron + Vite logo to learn more
-      </p>
-      <div className="flex-center">
-        Place static files into the<code>/public</code> folder <img style={{ width: "5em" }} src={nodeLogo} alt="Node logo" />
+        {/* <Canvas application={application} /> */}
+        <Toolbar />
       </div>
     </div>
   )

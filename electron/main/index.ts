@@ -39,20 +39,41 @@ let win: BrowserWindow | null = null
 const preload = join(__dirname, '../preload/index.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
+const splashHtml = join(__dirname, '../../public/splash.html')
 
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     icon: join(process.env.PUBLIC, 'favicon.ico'),
+    // transparent: true,
+    // backgroundColor: '#00FFFFFF',
+    // frame: false,
+    show: false,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
       // Consider using contextBridge.exposeInMainWorld
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
     },
   })
+
+  var splash = new BrowserWindow({
+    width: 640, 
+    height: 402, 
+    transparent: true, 
+    frame: false, 
+    alwaysOnTop: true 
+  })
+
+  splash.loadFile(splashHtml)
+  
+  // win.setIgnoreMouseEvents(true);
+  // win.setAlwaysOnTop(true);
+  // win.setFocusable(false);
+  // win.setOpacity(0.5)
+  // win.webContents.openDevTools({mode:'undocked'})
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
@@ -64,7 +85,12 @@ async function createWindow() {
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
+    registerListeners(win);
     win?.webContents.send('main-process-message', new Date().toLocaleString())
+    setTimeout(() => {
+      win?.show();
+      splash?.destroy();
+    }, 500)
   })
 
   // Make all links open with the browser, not with the application
@@ -114,3 +140,11 @@ ipcMain.handle('open-win', (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
 })
+
+const registerListeners = (window: BrowserWindow) : void => {
+  ipcMain.on('set-title', (event, title) => {
+    const webContents = event.sender
+    const win = BrowserWindow.fromWebContents(webContents)
+    win.setTitle(`${title}`)
+  })
+}
