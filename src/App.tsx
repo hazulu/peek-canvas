@@ -8,29 +8,32 @@ import FeatureApplication from "./classes/application"
 const application = new FeatureApplication(600, 400, {})
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [height, setHeight] = useState(100)
+  const [width, setWidth] = useState(100)
   const [clipboardImg, setClipboardImg] = useState(null)
 
-  // useEffect(() => {
-  //   window.addEventListener("paste", (e) => {
-      
-  //   });
+  window.electronAPI.onResize((_event, { width, height }) => {
+    setHeight(height);
+    setWidth(width);
+  })
 
-  //   return () => window.removeEventListener("paste");
-  // }, []);
+  useEffect(() => {
+    // window.addEventListener("resize", (e) => {
+    //   application.resize()
+    // });
 
-  const incrementCount = (): void => {
-    setCount((count) => count + 1)
-    console.log(count)
-    window.electronAPI.setTitle(count)
-  }
+    return () => {
+      // window.removeEventListener('resize')
+      // window.removeEventListener('paste')
+    };
+  }, []);
 
   return (
-    <div className="App flex flex-col min-h-screen bg-slate-200">
-      <div>
-        <Canvas application={application} />
-        <Toolbar />
-      </div>
+    <div className="App flex flex-col bg-slate-200" style={{ width: width, height: height }}>
+      <div className="flex bg-purple-600 h-4" />
+      <Canvas application={application} />
+      {/* <Toolbar /> */}
+      <div className="flex bg-purple-600 h-4 mt-auto" />
     </div>
   )
 }

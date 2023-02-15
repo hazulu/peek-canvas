@@ -147,4 +147,14 @@ const registerListeners = (window: BrowserWindow) : void => {
     const win = BrowserWindow.fromWebContents(webContents)
     win.setTitle(`${title}`)
   })
+
+  window.on('resize', () => {
+    var size = window.getContentSize();
+    var width = size[0];
+    var height = size[1];
+    window.webContents.send("resized", { width, height });
+    console.log(size);
+    console.log("width: " + width);
+    console.log("height: " + height);
+  });
 }

@@ -11,6 +11,7 @@ const Canvas: FunctionComponent<CanvasProps> = ({application}: CanvasProps) => {
 
     const init = () => {
         application.start(async (view: HTMLWebViewElement) => {
+            application.setParent(containerRef.current);
             containerRef.current.appendChild(view);
         });
     };
@@ -27,8 +28,8 @@ const Canvas: FunctionComponent<CanvasProps> = ({application}: CanvasProps) => {
 
 
     return (
-        <div className='w-full'>
-            <div id="canvas-container" ref={containerRef} />
+        <div className='flex flex-1 w-full h-full'>
+            <div className='block h-full w-full' id="canvas-container" ref={containerRef} />
         </div>
     )
 }

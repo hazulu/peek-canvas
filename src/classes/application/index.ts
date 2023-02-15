@@ -18,7 +18,6 @@ export default class FeatureApplication {
     ready: Boolean = false;
 
     constructor(width: number, height: number, options: FeatureApplicationOptions | null) {
-
         // Install Unsafe-eval Fix For Pixi.js
         install({ ShaderSystem });
 
@@ -30,7 +29,7 @@ export default class FeatureApplication {
             autoDensity: true
         });
 
-        // settings.SCALE_MODE = SCALE_MODES.NEAREST;
+        settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
         this.#canvas = new FeatureApplicationCanvas();
 
@@ -38,20 +37,15 @@ export default class FeatureApplication {
         this.#viewport.addChild(this.#canvas.getScene());
 
         this.#application.renderer.on("resize", (e) => {
-            console.log('resized!!!')
-
-            const { clientWidth, clientHeight } = this.#application.view.parentNode;
-
-            this.#application.resize();
-            this.#viewport.resize(clientWidth, clientHeight);
+            // console.log('called!')
+            const { width, height } = this.#application.renderer
+            this.#viewport.resize(width, height);
         });
 
         this.update();
     }
 
     buildViewport(width: number, height: number): Viewport {
-        const bleed = 10;
-
         const viewport = new Viewport({
             screenWidth: width,
             screenHeight: height,
@@ -89,6 +83,10 @@ export default class FeatureApplication {
 
     getApplicationView(): HTMLWebViewElement {
         return this.#application.view;
+    }
+
+    setParent(parent: HTMLElement): void {
+        this.#application.resizeTo = parent;
     }
 
     update() : void {

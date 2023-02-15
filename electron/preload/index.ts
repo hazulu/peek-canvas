@@ -1,7 +1,8 @@
 import { contextBridge, ipcRenderer, ipcMain } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  setTitle: (title) => ipcRenderer.send('set-title', title)
+  setTitle: (title) => ipcRenderer.send('set-title', title),
+  onResize: (callback) => ipcRenderer.on('resized', callback),
 })
 
 // contextBridge.exposeInMainWorld('electronAPI', {
