@@ -28,9 +28,7 @@ const Canvas: FunctionComponent<CanvasProps> = ({application}: CanvasProps) => {
 
 
     return (
-        <div className='flex flex-1 w-full h-full'>
-            <div className='block h-full w-full' id="canvas-container" ref={containerRef} />
-        </div>
+        <div className='block h-full w-full' id="canvas-container" ref={containerRef} />
     )
 }
 

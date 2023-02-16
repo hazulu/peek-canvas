@@ -8,32 +8,25 @@ import FeatureApplication from "./classes/application"
 const application = new FeatureApplication(600, 400, {})
 
 function App() {
-  const [height, setHeight] = useState(100)
-  const [width, setWidth] = useState(100)
   const [clipboardImg, setClipboardImg] = useState(null)
 
-  window.electronAPI.onResize((_event, { width, height }) => {
-    setHeight(height);
-    setWidth(width);
-  })
-
   useEffect(() => {
-    // window.addEventListener("resize", (e) => {
-    //   application.resize()
+    // window.addEventListener("paste", (e) => {
     // });
 
     return () => {
-      // window.removeEventListener('resize')
       // window.removeEventListener('paste')
     };
   }, []);
 
   return (
-    <div className="App flex flex-col bg-slate-200" style={{ width: width, height: height }}>
-      <div className="flex bg-purple-600 h-4" />
-      <Canvas application={application} />
-      {/* <Toolbar /> */}
-      <div className="flex bg-purple-600 h-4 mt-auto" />
+    <div className="App flex flex-col h-screen w-screen bg-slate-200">
+      <div className='flex h-full w-full flex-1 relative'>
+        <Canvas application={application} />
+        <div className="flex items-center justify-center absolute bottom-0 left-0 right-0 p-2">
+          <div className="flex bg-purple-600 px-2 py-1 select-none">Menu</div>
+        </div>
+      </div>
     </div>
   )
 }

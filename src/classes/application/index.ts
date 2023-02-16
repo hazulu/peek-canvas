@@ -31,9 +31,10 @@ export default class FeatureApplication {
 
         settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
-        this.#canvas = new FeatureApplicationCanvas();
-
         this.#viewport = this.buildViewport(width, height);
+        this.#application.stage.addChild(this.#viewport);
+
+        this.#canvas = new FeatureApplicationCanvas();
         this.#viewport.addChild(this.#canvas.getScene());
 
         this.#application.renderer.on("resize", (e) => {
@@ -41,7 +42,7 @@ export default class FeatureApplication {
             const { width, height } = this.#application.renderer
             this.#viewport.resize(width, height);
         });
-
+        this.ready = true;
         this.update();
     }
 
@@ -53,6 +54,7 @@ export default class FeatureApplication {
             worldHeight: DOCUMENT_HEIGHT,
             interaction: this.#application.renderer.plugins.interaction,
             passiveWheel: false,
+            disableOnContextMenu: true,
         });
 
         viewport
@@ -60,7 +62,9 @@ export default class FeatureApplication {
                 minScale: 0.75,
                 maxScale: 50,
             })
-            .drag()
+            .drag({
+                mouseButtons: 'right'
+            })
             .pinch()
             .wheel({
                 smooth: 15,

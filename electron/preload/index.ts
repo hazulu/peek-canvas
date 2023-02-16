@@ -2,12 +2,9 @@ import { contextBridge, ipcRenderer, ipcMain } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
   setTitle: (title) => ipcRenderer.send('set-title', title),
-  onResize: (callback) => ipcRenderer.on('resized', callback),
-})
-
-// contextBridge.exposeInMainWorld('electronAPI', {
 //   loadPreferences: () => ipcRenderer.invoke('load-prefs')
-// })
+
+})
 
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise(resolve => {
