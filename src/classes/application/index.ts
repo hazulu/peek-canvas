@@ -9,6 +9,7 @@ type FeatureApplicationOptions = {
 
 const DOCUMENT_WIDTH: number = 1000;
 const DOCUMENT_HEIGHT: number = 1000;
+const SCALE_FACTOR: number = 0.025;
 
 export default class FeatureApplication {
 
@@ -16,6 +17,9 @@ export default class FeatureApplication {
     #canvas: FeatureApplicationCanvas;
     #viewport: Viewport;
     ready: Boolean = false;
+
+    #mouseDown: boolean = false;
+    #mouseDownAt = [0, 0];
 
     constructor(width: number, height: number, options: FeatureApplicationOptions | null) {
         // Install Unsafe-eval Fix For Pixi.js
@@ -42,6 +46,34 @@ export default class FeatureApplication {
             const { width, height } = this.#application.renderer
             this.#viewport.resize(width, height);
         });
+
+        this.#viewport.on("mousedown", e => {
+            const { x, y } = e.data.global;
+            const position = [Math.floor(x), Math.floor(y)];
+
+            this.#mouseDown = true;
+            this.#mouseDownAt = position;
+        });
+
+        this.#viewport.on("mouseup", e => {
+            this.#mouseDown = false;
+            console.log('Mouse Up!');
+        });
+
+        this.#viewport.on("mousemove", e => {
+            // Handle
+            if (this.#mouseDown) {
+                // Add Switch For Action Type
+                const { x, y } = e.data.global;
+                const position = [Math.floor(x), Math.floor(y)];
+
+                const differenceX = position[0] - this.#mouseDownAt[0];
+                const differenceY = position[1] - this.#mouseDownAt[1];
+                this.#canvas.moveLayerPositionByAmount(differenceX, differenceY, 0);
+                this.#mouseDownAt = position;
+            };
+        });
+
         this.ready = true;
         this.update();
     }
@@ -58,10 +90,10 @@ export default class FeatureApplication {
         });
 
         viewport
-            .clampZoom({
-                minScale: 0.75,
-                maxScale: 50,
-            })
+            // .clampZoom({
+            //     minScale: 1,
+            //     maxScale: 50,
+            // })
             .drag({
                 mouseButtons: 'right'
             })

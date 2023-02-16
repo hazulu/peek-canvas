@@ -23,8 +23,11 @@ function App() {
     <div className="App flex flex-col h-screen w-screen bg-slate-200">
       <div className='flex h-full w-full flex-1 relative'>
         <Canvas application={application} />
-        <div className="flex items-center justify-center absolute bottom-0 left-0 right-0 p-2">
+        {/* <div className="flex items-center justify-center absolute bottom-0 left-0 right-0 p-2">
           <div className="flex bg-purple-600 px-2 py-1 select-none">Menu</div>
+        </div> */}
+        <div className="block absolute bottom-2 left-2 select-none">
+          <div className="bg-purple-600 px-2 py-1">Menu</div>
         </div>
       </div>
     </div>
