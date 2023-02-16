@@ -48,7 +48,7 @@ export default class FeatureApplication {
         });
 
         this.#viewport.on("mousedown", e => {
-            const { x, y } = e.data.global;
+            const { x, y } = this.#viewport.toWorld(e.data.global);
             const position = [Math.floor(x), Math.floor(y)];
 
             this.#mouseDown = true;
@@ -64,7 +64,7 @@ export default class FeatureApplication {
             // Handle
             if (this.#mouseDown) {
                 // Add Switch For Action Type
-                const { x, y } = e.data.global;
+                const { x, y } = this.#viewport.toWorld(e.data.global);
                 const position = [Math.floor(x), Math.floor(y)];
 
                 const differenceX = position[0] - this.#mouseDownAt[0];

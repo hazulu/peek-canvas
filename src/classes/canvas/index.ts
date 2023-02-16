@@ -55,21 +55,31 @@ export default class FeatureApplicationCanvas {
 
     setLayerScale(scale: number, layerId: number): void {
         const layer = this.#imageLayers.get(layerId);
+
+        if (layer) {
+            layer.scale.x = scale;
+            layer.scale.y = scale;
+        }
     }
 
     moveLayerPositionByAmount(x: number, y: number, layerId: number): void {
         const layer = this.#imageLayers.get(layerId);
-        let newX, newY;
 
         if (layer) {
-            newX = layer.position.x + x;
-            newY = layer.position.y + y;
+            const newX = layer.position.x + x;
+            const newY = layer.position.y + y;
             this.setLayerPosition(newX, newY, layerId);
         }
     }
 
     moveLayerScaleByAmount(scale: number, layerId: number): void {
+        const layer = this.#imageLayers.get(layerId);
+        let newScale;
 
+        if (layer) {
+            const newScale = layer.scale.x + scale;
+            this.setLayerScale(newScale, layerId);
+        }
     }
 
 }
