@@ -1,3 +1,4 @@
+import { clamp } from "@/util/math";
 import { Container, Sprite, Graphics } from "pixi.js"
 
 
@@ -30,10 +31,11 @@ export default class FeatureApplicationCanvas {
         square.endFill();
         this.#scene.addChild(square);
         this.#imageLayers.set(0, square);
+        square.pivot.set(50);
 
         const square2 = new Graphics();
         square2.beginFill(0xcecece);
-        square2.drawRect(0, 0, 150, 150);
+        square2.drawRect(0, 0, 20, 20);
         square2.endFill();
         this.#scene.addChild(square2);
     }
@@ -74,11 +76,12 @@ export default class FeatureApplicationCanvas {
 
     moveLayerScaleByAmount(scale: number, layerId: number): void {
         const layer = this.#imageLayers.get(layerId);
-        let newScale;
 
         if (layer) {
             const newScale = layer.scale.x + scale;
-            this.setLayerScale(newScale, layerId);
+            const clampedScale = clamp(newScale, 0.01, 100);
+
+            this.setLayerScale(clampedScale, layerId);
         }
     }
 

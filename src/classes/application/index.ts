@@ -1,4 +1,4 @@
-import { Application, settings, SCALE_MODES, Point } from 'pixi.js'
+import { Application, settings, SCALE_MODES, Point, InteractionEvent } from 'pixi.js'
 import { ShaderSystem } from "@pixi/core";
 import { install } from "@pixi/unsafe-eval";
 import { Viewport } from 'pixi-viewport'
@@ -20,6 +20,8 @@ export default class FeatureApplication {
 
     #mouseDown: boolean = false;
     #mouseDownAt = [0, 0];
+
+    #selectedTool: number = 1;
 
     constructor(width: number, height: number, options: FeatureApplicationOptions | null) {
         // Install Unsafe-eval Fix For Pixi.js
@@ -47,32 +49,9 @@ export default class FeatureApplication {
             this.#viewport.resize(width, height);
         });
 
-        this.#viewport.on("mousedown", e => {
-            const { x, y } = this.#viewport.toWorld(e.data.global);
-            const position = [Math.floor(x), Math.floor(y)];
-
-            this.#mouseDown = true;
-            this.#mouseDownAt = position;
-        });
-
-        this.#viewport.on("mouseup", e => {
-            this.#mouseDown = false;
-            console.log('Mouse Up!');
-        });
-
-        this.#viewport.on("mousemove", e => {
-            // Handle
-            if (this.#mouseDown) {
-                // Add Switch For Action Type
-                const { x, y } = this.#viewport.toWorld(e.data.global);
-                const position = [Math.floor(x), Math.floor(y)];
-
-                const differenceX = position[0] - this.#mouseDownAt[0];
-                const differenceY = position[1] - this.#mouseDownAt[1];
-                this.#canvas.moveLayerPositionByAmount(differenceX, differenceY, 0);
-                this.#mouseDownAt = position;
-            };
-        });
+        this.#viewport.on("mousedown", e => this.onMouseDown(e));
+        this.#viewport.on("mouseup", e => this.onMouseUp(e));
+        this.#viewport.on("mousemove", e => this.onMouseMove(e));
 
         this.ready = true;
         this.update();
@@ -90,10 +69,10 @@ export default class FeatureApplication {
         });
 
         viewport
-            // .clampZoom({
-            //     minScale: 1,
-            //     maxScale: 50,
-            // })
+            .clampZoom({
+                minScale: 0.25,
+                maxScale: 2,
+            })
             .drag({
                 mouseButtons: 'right'
             })
@@ -123,6 +102,42 @@ export default class FeatureApplication {
 
     setParent(parent: HTMLElement): void {
         this.#application.resizeTo = parent;
+    }
+
+    onMouseDown(e: InteractionEvent): void {
+        const { x, y } = this.#viewport.toWorld(e.data.global);
+        const position = [Math.floor(x), Math.floor(y)];
+
+        this.#mouseDown = true;
+        this.#mouseDownAt = position;
+    }
+
+    onMouseUp(e: InteractionEvent): void {
+        this.#mouseDown = false;
+    }
+
+    onMouseMove(e: InteractionEvent): void {
+        // Handle
+        if (this.#mouseDown) {
+            // Add Switch For Action Type
+            const { x, y } = this.#viewport.toWorld(e.data.global);
+            const position = [Math.floor(x), Math.floor(y)];
+
+            const differenceX = position[0] - this.#mouseDownAt[0];
+            const differenceY = position[1] - this.#mouseDownAt[1];
+
+            switch (this.#selectedTool) {
+                case 0:
+                    this.#canvas.moveLayerPositionByAmount(differenceX, differenceY, 0);
+                    break;
+                case 1:
+                    this.#canvas.moveLayerScaleByAmount(differenceX * SCALE_FACTOR, 0);
+                    break;
+                default: break;
+            }
+
+            this.#mouseDownAt = position;
+        };
     }
 
     update() : void {
