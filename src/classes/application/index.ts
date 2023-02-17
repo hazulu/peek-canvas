@@ -21,7 +21,7 @@ export default class FeatureApplication {
     #mouseDown: boolean = false;
     #mouseDownAt = [0, 0];
 
-    #selectedTool: number = 1;
+    #selectedTool: number = 0;
 
     constructor(width: number, height: number, options: FeatureApplicationOptions | null) {
         // Install Unsafe-eval Fix For Pixi.js
@@ -138,6 +138,10 @@ export default class FeatureApplication {
 
             this.#mouseDownAt = position;
         };
+    }
+
+    selectTool(toolId: number): void {
+        this.#selectedTool = toolId;
     }
 
     update() : void {
