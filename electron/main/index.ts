@@ -48,6 +48,8 @@ async function createWindow() {
     // transparent: true,
     // backgroundColor: '#00FFFFFF',
     // frame: false,
+    minWidth: 400,
+    minHeight: 400, 
     show: false,
     webPreferences: {
       preload,
@@ -61,7 +63,7 @@ async function createWindow() {
 
   var splash = new BrowserWindow({
     width: 640, 
-    height: 402, 
+    height: 402,
     transparent: true, 
     frame: false, 
     alwaysOnTop: true 
