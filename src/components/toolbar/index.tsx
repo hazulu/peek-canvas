@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { ChangeEvent, FunctionComponent } from 'react';
 import ToolbarInputButton from '../toolbar-input-button';
 import ToolbarButton from '../toolbar-button';
 import ToolbarDivider from '../toolbar-divider';
@@ -10,26 +10,24 @@ import OptionsIcon from 'Components/icons/options';
 type ToolbarProps = {
     selectedTool: number,
     onToolSelected: Function,
-    onUploadFile: Function
+    onImportImage: Function
 }
 
-const Toolbar: FunctionComponent<ToolbarProps> = ({ selectedTool, onToolSelected, onUploadImage }: ToolbarProps) => {
+const Toolbar: FunctionComponent<ToolbarProps> = ({ selectedTool, onToolSelected, onImportImage }: ToolbarProps) => {
 
     const handleToolSelected = (toolId: number) => {
         onToolSelected(toolId);
     } 
 
-    const handleUploadImage = e => {
-        // select file
-        // after file selected ->
-        console.log(e);
-        // onUploadImage();
+    const handleImportImage = (e: ChangeEvent<HTMLInputElement>) => {
+        const { files } = e.target;
+        onImportImage(files);
     }
 
     return (
         <div className="block absolute bottom-2 left-2 select-none">
-            <div className="flex flex-row bg-neutral-700 p-2 rounded-lg space-x-2 select-none">
-                <ToolbarButton inputType='button' onClick={e => null}>
+            <div className="flex flex-row bg-neutral-700 border border-neutral-500 p-2 rounded-lg space-x-2 select-none shadow-md">
+                <ToolbarButton onClick={e => null}>
                     <OptionsIcon className="w-6 h-6" />
                 </ToolbarButton>
                 <ToolbarDivider />
@@ -40,7 +38,7 @@ const Toolbar: FunctionComponent<ToolbarProps> = ({ selectedTool, onToolSelected
                     <ResizeLayer className="w-6 h-6" />
                 </ToolbarInputButton>
                 <ToolbarDivider />
-                <ToolbarInputButton inputType='file' inputId='image-upload' inputName='image-upload' onChange={handleUploadImage}>
+                <ToolbarInputButton inputType='file' inputId='image-upload' inputName='image-upload' onChange={handleImportImage} accept='image/*'>
                     <UploadImageIcon className="w-6 h-6" />
                 </ToolbarInputButton>
             </div>

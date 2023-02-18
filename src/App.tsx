@@ -23,17 +23,17 @@ function App() {
   const onPaste = (e: ClipboardEvent) => {
     const clipboardImage = retrieveImageFromClipboardAsBlob(e);
 
-    if (clipboardImage) onUpload(clipboardImage);
+    if (clipboardImage) onImport(clipboardImage);
   }
 
-  const onFilesDropped = (files) => {
+  const onFilesImported = (files) => {
     if (files) {
       const file = files[0];
-      onUpload(file);
+      onImport(file);
     }
   }
 
-  const onUpload = async (file) => {
+  const onImport = async (file) => {
     const base64 = await blobToData(file);
     application.addImageLayer(base64);
   }
@@ -45,11 +45,11 @@ function App() {
 
   return (
     <div className="App flex flex-col h-screen w-screen bg-slate-200 relative">
-      <Dropzone onFilesDropped={onFilesDropped} />
+      <Dropzone onFilesDropped={onFilesImported} />
 
       <div className='flex h-full w-full flex-1 relative'>
         <Canvas application={application} />
-        <Toolbar selectedTool={selectedTool} onToolSelected={handleToolSelected} />
+        <Toolbar selectedTool={selectedTool} onToolSelected={handleToolSelected} onImportImage={onFilesImported} />
       </div>
     </div>
   )
