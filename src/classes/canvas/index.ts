@@ -29,12 +29,10 @@ export default class FeatureApplicationCanvas {
         return this.#scene;
     }
 
-    removeLayer(layerId: number): void {
-        this.#imageLayers.splice(layerId, 1);
-    }
-
-    selectLayer(layerId: number): void {
-        return;
+    removeLayer(layerId: number): number {
+        const image = this.#imageLayers.splice(layerId, 1);
+        this.#scene.removeChild(image[0]);
+        return this.getLayerCount();
     }
 
     getLayerCount(): number {

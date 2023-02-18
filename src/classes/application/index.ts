@@ -195,6 +195,20 @@ export default class FeatureApplication {
         this.#selectedLayer = layerId;
     }
 
+    deleteLayer(layerId: number) {
+        if (layerId >= this.getLayerCount()) return;
+
+        const newLayerCount = this.#canvas.removeLayer(layerId);
+        const newSelectedLayer = layerId >= newLayerCount ? layerId - 1 : layerId;
+
+        this.selectLayer(newSelectedLayer);
+
+        return {
+            layerCount: newLayerCount,
+            selectedLayer: newSelectedLayer
+        }
+    }
+
     addImageLayer(base64: string): number {
         return this.#canvas.addImage(this.#viewport.center, base64);
     }

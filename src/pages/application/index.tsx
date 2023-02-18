@@ -52,6 +52,20 @@ function App() {
         application.selectLayer(layerId);
     }
 
+    const handleLayerDeleted = (layerId: number): void => {
+        const layersInfo = application.deleteLayer(layerId);
+
+        if(layersInfo) {
+            const {
+                layerCount,
+                selectedLayer,
+            } = layersInfo;
+
+            setLayerCount(layerCount);
+            setSelectedLayer(selectedLayer);
+        }
+    }
+
     return (
         <div className="App flex flex-col h-screen w-screen bg-slate-200 relative">
             <Dropzone onFilesDropped={onFilesImported} />
@@ -59,7 +73,7 @@ function App() {
             <div className='flex h-full w-full flex-1 relative'>
                 <Canvas application={application} />
                 <Toolbar selectedTool={selectedTool} onToolSelected={handleToolSelected} onImportImage={onFilesImported} />
-                <LayerWidget selectedLayer={selectedLayer} layerCount={layerCount} onLayerSelected={handleLayerSelected} />
+                <LayerWidget selectedLayer={selectedLayer} layerCount={layerCount} onLayerSelected={handleLayerSelected} onLayerDeleted={handleLayerDeleted} />
             </div>
         </div>
     )
