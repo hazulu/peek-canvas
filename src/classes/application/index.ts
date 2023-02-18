@@ -7,6 +7,8 @@ import FeatureApplicationCanvas from '../canvas'
 type FeatureApplicationOptions = {
 }
 
+type FlickerState = 'on' | 'off'
+
 const DOCUMENT_WIDTH: number = 1000;
 const DOCUMENT_HEIGHT: number = 1000;
 const SCALE_FACTOR: number = 0.025;
@@ -25,6 +27,10 @@ export default class FeatureApplication {
     #selectedLayer: number = 0;
 
     #isDragging: boolean = false;
+
+    #flickerTimer: ReturnType<typeof setInterval> | undefined = undefined;
+    #flickerCount: number = 0;
+    #flickerState: FlickerState = 'off';
 
     #updateCursorEvent: Function | null = null;
 
@@ -192,6 +198,12 @@ export default class FeatureApplication {
     }
 
     selectLayer(layerId: number): void {
+        if (this.#flickerTimer != undefined)
+            this.resetFlicker(this.#selectedLayer);
+
+        const interval = this.onFlicker.bind(this);
+        this.#flickerTimer = setInterval(() => interval(layerId), 90);
+
         this.#selectedLayer = layerId;
     }
 
@@ -215,6 +227,30 @@ export default class FeatureApplication {
 
     getLayerCount(): number {
         return this.#canvas.getLayerCount();
+    }
+
+    resetFlicker(layerId: number): void {
+        this.#canvas.setLayerOpacity(1, layerId);
+        this.#flickerCount = 0;
+        clearInterval(this.#flickerTimer);
+        this.#flickerTimer = undefined;
+    }
+
+    onFlicker(layerId: number): void {
+        if (this.#flickerCount >= 4)
+            return this.resetFlicker(layerId);
+
+        switch (this.#flickerState) {
+            case 'on':
+                this.#canvas.setLayerOpacity(1, layerId);
+                this.#flickerCount++;
+                this.#flickerState = 'off';
+                break;
+            case 'off':
+                this.#canvas.setLayerOpacity(0.65, layerId);
+                this.#flickerState = 'on';
+                break;
+        }
     }
 
     update() : void {
