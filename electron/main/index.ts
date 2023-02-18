@@ -76,6 +76,7 @@ async function createWindow() {
   // win.setFocusable(false);
   // win.setOpacity(0.5)
   // win.webContents.openDevTools({mode:'undocked'})
+  win.setMenu(null);
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
