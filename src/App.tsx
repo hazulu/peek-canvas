@@ -5,6 +5,7 @@ import Canvas from 'Components/canvas'
 import Toolbar from 'Components/toolbar'
 import FeatureApplication from "./classes/application"
 import { retrieveImageFromClipboardAsBlob, blobToData } from "./services/clipboard"
+import Dropzone from "./components/dropzone"
 
 const application = new FeatureApplication(600, 400, {})
 
@@ -28,13 +29,21 @@ function App() {
     }
   }
 
+  const onFileDropped = (e: DragEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log('hello!!!')
+  }
+
   const handleToolSelected = (toolId: number): void => {
     setSelectedTool(toolId);
     application.selectTool(toolId);
   }
 
   return (
-    <div className="App flex flex-col h-screen w-screen bg-slate-200">
+    <div className="App flex flex-col h-screen w-screen bg-slate-200 relative">
+      <Dropzone onFileDropped={onFileDropped} />
+
       <div className='flex h-full w-full flex-1 relative'>
         <Canvas application={application} />
         <Toolbar selectedTool={selectedTool} onToolSelected={handleToolSelected} />

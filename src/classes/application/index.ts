@@ -51,6 +51,7 @@ export default class FeatureApplication {
             // console.log('called!')
             const { width, height } = this.#application.renderer
             this.#viewport.resize(width, height);
+            this.#application.render();
         });
 
         this.#viewport.on("mousedown", e => this.onViewportMouseDown(e));
