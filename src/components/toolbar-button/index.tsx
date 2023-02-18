@@ -1,8 +1,8 @@
-import React, { ChangeEventHandler, FunctionComponent, HTMLInputTypeAttribute, MouseEventHandler, TouchEventHandler } from 'react';
+import React, { FunctionComponent, MouseEventHandler } from 'react';
 
 type ToolbarButtonProps = {
     onClick?: MouseEventHandler,
-    children: any
+    children?: any
 }
 
 const ToolbarButton: FunctionComponent<ToolbarButtonProps> = ({ 

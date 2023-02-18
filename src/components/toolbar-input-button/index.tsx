@@ -1,6 +1,6 @@
 import React, { ChangeEventHandler, FunctionComponent, HTMLInputTypeAttribute, MouseEventHandler, TouchEventHandler } from 'react';
 
-type ToolbarButtonProps = {
+type ToolbarInputButtonProps = {
     inputType: HTMLInputTypeAttribute,
     inputId: string,
     inputName: string,
@@ -11,7 +11,7 @@ type ToolbarButtonProps = {
     accept?: string,
 }
 
-const ToolbarButton: FunctionComponent<ToolbarButtonProps> = ({
+const ToolbarInputButton: FunctionComponent<ToolbarInputButtonProps> = ({
     inputType = 'checkbox',
     inputId = '',
     inputName = '',
@@ -20,7 +20,7 @@ const ToolbarButton: FunctionComponent<ToolbarButtonProps> = ({
     onChange,
     accept,
     children
-}: ToolbarButtonProps) => {
+}: ToolbarInputButtonProps) => {
 
     return (
         <div className="flex">
@@ -41,4 +41,4 @@ const ToolbarButton: FunctionComponent<ToolbarButtonProps> = ({
     )
 }
 
-export default ToolbarButton
+export default ToolbarInputButton

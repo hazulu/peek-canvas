@@ -191,8 +191,16 @@ export default class FeatureApplication {
         this.updateCursor();
     }
 
-    addImageLayer(base64: string): void {
-        this.#canvas.addImage(this.#viewport.center, base64);
+    selectLayer(layerId: number): void {
+        this.#selectedLayer = layerId;
+    }
+
+    addImageLayer(base64: string): number {
+        return this.#canvas.addImage(this.#viewport.center, base64);
+    }
+
+    getLayerCount(): number {
+        return this.#canvas.getLayerCount();
     }
 
     update() : void {

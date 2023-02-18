@@ -37,14 +37,18 @@ export default class FeatureApplicationCanvas {
         return;
     }
 
-    // addImage
-    addImage(position: Point, base64: string): void {
+    getLayerCount(): number {
+        return this.#imageLayers.length;
+    }
+
+    addImage(position: Point, base64: string): number {
         const image: Sprite = Sprite.from(base64);
         image.anchor.set(0.5);
         image.x = position.x;
         image.y = position.y;
         this.#scene.addChild(image);
-        this.#imageLayers.push(image);
+        const count = this.#imageLayers.push(image);
+        return count;
     }
 
     setLayerPosition(x: number, y: number, layerId: number): void {
