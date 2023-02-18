@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, FunctionComponent } from 'react';
+import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
 import FeatureApplication from '@/classes/application';
 
 type CanvasProps = {
@@ -6,29 +6,22 @@ type CanvasProps = {
 }
 
 const Canvas: FunctionComponent<CanvasProps> = ({application}: CanvasProps) => {
-
     const containerRef = useRef();
+    const [cursorStyle, setCursorStyle] = useState('cursor-auto');
 
-    const init = () => {
+    useEffect(() => {
         application.start(async (view: HTMLWebViewElement) => {
             application.setParent(containerRef.current);
             containerRef.current.appendChild(view);
+            application.onUpdateCursor(setCursor);
         });
-    };
-
-    // const exit = () => {
-    //     application.stop();
-    //     if (containerRef.current) containerRef.current.innerHTML = "";
-    // };
-
-    useEffect(() => {
-        init();
-        // return () => exit();
     }, []);
+
+    const setCursor = (cursorStyleName: string): void => setCursorStyle(cursorStyleName);
 
 
     return (
-        <div className='block h-full w-full' id="canvas-container" ref={containerRef} />
+        <div className={`block h-full w-full ${cursorStyle}`} id="canvas-container" ref={containerRef} />
     )
 }
 

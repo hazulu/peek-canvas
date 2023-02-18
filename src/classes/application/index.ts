@@ -23,6 +23,10 @@ export default class FeatureApplication {
 
     #selectedTool: number = 0;
 
+    #isDragging: boolean = false;
+
+    #updateCursorEvent: Function | null = null;
+
     constructor(width: number, height: number, options: FeatureApplicationOptions | null) {
         // Install Unsafe-eval Fix For Pixi.js
         install({ ShaderSystem });
@@ -49,9 +53,11 @@ export default class FeatureApplication {
             this.#viewport.resize(width, height);
         });
 
-        this.#viewport.on("mousedown", e => this.onMouseDown(e));
-        this.#viewport.on("mouseup", e => this.onMouseUp(e));
-        this.#viewport.on("mousemove", e => this.onMouseMove(e));
+        this.#viewport.on("mousedown", e => this.onViewportMouseDown(e));
+        this.#viewport.on("mouseup", e => this.onViewportMouseUp(e));
+        this.#viewport.on("mousemove", e => this.onViewportMouseMove(e));
+        this.#viewport.on("drag-start", e => this.onViewportDragStart(e));
+        this.#viewport.on("drag-end", e => this.onViewportDragEnd(e));
 
         this.ready = true;
         this.update();
@@ -104,7 +110,7 @@ export default class FeatureApplication {
         this.#application.resizeTo = parent;
     }
 
-    onMouseDown(e: InteractionEvent): void {
+    onViewportMouseDown(e: InteractionEvent): void {
         const { x, y } = this.#viewport.toWorld(e.data.global);
         const position = [Math.floor(x), Math.floor(y)];
 
@@ -112,11 +118,11 @@ export default class FeatureApplication {
         this.#mouseDownAt = position;
     }
 
-    onMouseUp(e: InteractionEvent): void {
+    onViewportMouseUp(e: InteractionEvent): void {
         this.#mouseDown = false;
     }
 
-    onMouseMove(e: InteractionEvent): void {
+    onViewportMouseMove(e: InteractionEvent): void {
         // Handle
         if (this.#mouseDown) {
             // Add Switch For Action Type
@@ -140,8 +146,49 @@ export default class FeatureApplication {
         };
     }
 
+    onViewportDragStart(e: InteractionEvent): void {
+        this.#isDragging = true;
+        this.updateCursor();
+    }
+
+    onViewportDragEnd(e: InteractionEvent): void {
+        this.#isDragging = false;
+        this.updateCursor();
+    }
+
+    onUpdateCursor(cb: Function): void {
+        this.#updateCursorEvent = cb;
+        this.updateCursor();
+    }
+
+    updateCursor(): void {
+        let cursor;
+        
+        if (this.#isDragging)
+            cursor = 'cursor-grabbing';
+        else
+            switch (this.#selectedTool) {
+                case 0:
+                    cursor = 'cursor-all-scroll';
+                    break;
+                case 1:
+                    cursor = 'cursor-ne-resize';
+                    break;
+                default:
+                    cursor = 'cursor-default';
+            }
+
+        if (typeof this.#updateCursorEvent === 'function')
+            this.#updateCursorEvent(cursor);
+    }
+
     selectTool(toolId: number): void {
         this.#selectedTool = toolId;
+        this.updateCursor();
+    }
+
+    addImageLayer(base64: string): void {
+        this.#canvas.addImage(base64);
     }
 
     update() : void {

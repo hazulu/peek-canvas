@@ -8,12 +8,21 @@ import { Container, Sprite, Graphics } from "pixi.js"
 export default class FeatureApplicationCanvas {
 
     #scene: Container;
-    #imageLayers: Map<number, Graphics>;
+    #imageLayers: Array<Sprite>;
 
     constructor() {
         this.#scene = new Container();
-        this.#imageLayers = new Map<number, Graphics>();
-        this.debugTest();
+        this.#imageLayers = [];
+
+        this.setupOriginSquare();
+    }
+
+    setupOriginSquare(): void {
+        const square = new Graphics();
+        square.beginFill(0xffffff);
+        square.drawRect(0, 0, 32, 32);
+        square.endFill();
+        this.#scene.addChild(square);
     }
 
     getScene(): Container {
@@ -21,33 +30,23 @@ export default class FeatureApplicationCanvas {
     }
 
     removeLayer(layerId: number): void {
-        this.#imageLayers.delete(layerId);
+        this.#imageLayers.splice(layerId, 1);
     }
 
-    debugTest(): void {
-        const square = new Graphics();
-        square.beginFill(0xffffff);
-        square.drawRect(0, 0, 100, 100);
-        square.endFill();
-        this.#scene.addChild(square);
-        this.#imageLayers.set(0, square);
-        square.pivot.set(50);
-
-        const square2 = new Graphics();
-        square2.beginFill(0xcecece);
-        square2.drawRect(0, 0, 20, 20);
-        square2.endFill();
-        this.#scene.addChild(square2);
+    selectLayer(layerId: number): void {
+        return;
     }
-
-    // createLayer
-
-    // assignImageToLayer
 
     // addImage
+    addImage(base64: string): void {
+        const image: Sprite = Sprite.from(base64);
+        image.anchor.set(0.5);
+        this.#scene.addChild(image);
+        this.#imageLayers.push(image);
+    }
 
     setLayerPosition(x: number, y: number, layerId: number): void {
-        const layer = this.#imageLayers.get(layerId);
+        const layer = this.#imageLayers[layerId];
 
         if (layer) {
             layer.position.x = x;
@@ -56,7 +55,7 @@ export default class FeatureApplicationCanvas {
     }
 
     setLayerScale(scale: number, layerId: number): void {
-        const layer = this.#imageLayers.get(layerId);
+        const layer = this.#imageLayers[layerId];
 
         if (layer) {
             layer.scale.x = scale;
@@ -65,7 +64,7 @@ export default class FeatureApplicationCanvas {
     }
 
     moveLayerPositionByAmount(x: number, y: number, layerId: number): void {
-        const layer = this.#imageLayers.get(layerId);
+        const layer = this.#imageLayers[layerId];
 
         if (layer) {
             const newX = layer.position.x + x;
@@ -75,7 +74,7 @@ export default class FeatureApplicationCanvas {
     }
 
     moveLayerScaleByAmount(scale: number, layerId: number): void {
-        const layer = this.#imageLayers.get(layerId);
+        const layer = this.#imageLayers[layerId];
 
         if (layer) {
             const newScale = layer.scale.x + scale;

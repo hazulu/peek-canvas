@@ -1,17 +1,16 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import ToolbarButton from '../toolbar-button';
 import MoveLayerIcon from 'Components/icons/move-layer'
 import ResizeLayer from '@/components/icons/resize-layer'
 
 type ToolbarProps = {
+    selectedTool: number,
     onToolSelected: Function,
 }
 
-const Toolbar: FunctionComponent<ToolbarProps> = ({ onToolSelected }: ToolbarProps) => {
-    const [selectedTool, setSelectedTool] = useState(0);
+const Toolbar: FunctionComponent<ToolbarProps> = ({ selectedTool, onToolSelected }: ToolbarProps) => {
 
     const handleToolSelected = (toolId: number) => {
-        setSelectedTool(toolId);
         onToolSelected(toolId);
     } 
 
