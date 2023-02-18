@@ -22,6 +22,7 @@ export default class FeatureApplication {
     #mouseDownAt = [0, 0];
 
     #selectedTool: number = 0;
+    #selectedLayer: number = 0;
 
     #isDragging: boolean = false;
 
@@ -133,12 +134,14 @@ export default class FeatureApplication {
             const differenceX = position[0] - this.#mouseDownAt[0];
             const differenceY = position[1] - this.#mouseDownAt[1];
 
+            const layerId = this.#selectedLayer;
+
             switch (this.#selectedTool) {
                 case 0:
-                    this.#canvas.moveLayerPositionByAmount(differenceX, differenceY, 0);
+                    this.#canvas.moveLayerPositionByAmount(differenceX, differenceY, layerId);
                     break;
                 case 1:
-                    this.#canvas.moveLayerScaleByAmount(differenceX * SCALE_FACTOR, 0);
+                    this.#canvas.moveLayerScaleByAmount(differenceX * SCALE_FACTOR, layerId);
                     break;
                 default: break;
             }
@@ -189,7 +192,7 @@ export default class FeatureApplication {
     }
 
     addImageLayer(base64: string): void {
-        this.#canvas.addImage(base64);
+        this.#canvas.addImage(this.#viewport.center, base64);
     }
 
     update() : void {

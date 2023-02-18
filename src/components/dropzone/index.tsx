@@ -2,11 +2,11 @@ import React, { useEffect, useState, ChangeEventHandler, FunctionComponent, HTML
 import UploadImage from 'Components/icons/upload-image';
 
 type DropzoneProps = {
-    onFileDropped: Function
+    onFilesDropped: Function
 }
 
 
-const Dropzone: FunctionComponent<DropzoneProps> = ({ onFileDropped }: DropzoneProps) => {
+const Dropzone: FunctionComponent<DropzoneProps> = ({ onFilesDropped }: DropzoneProps) => {
 
     const [showDropzone, setShowDropzone] = useState(false);
 
@@ -47,8 +47,8 @@ const Dropzone: FunctionComponent<DropzoneProps> = ({ onFileDropped }: DropzoneP
         const dt = e.dataTransfer;
         const files = dt?.files;
 
-        if (files) console.log(files);
         setShowDropzone(false);
+        onFilesDropped(files);
     }
 
     return (

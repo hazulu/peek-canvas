@@ -20,19 +20,22 @@ function App() {
     };
   }, []);
 
-  const onPaste = async (e: ClipboardEvent) => {
+  const onPaste = (e: ClipboardEvent) => {
     const clipboardImage = retrieveImageFromClipboardAsBlob(e);
 
-    if (clipboardImage) {
-      const base64 = await blobToData(clipboardImage);
-      application.addImageLayer(base64);
+    if (clipboardImage) onUpload(clipboardImage);
+  }
+
+  const onFilesDropped = (files) => {
+    if (files) {
+      const file = files[0];
+      onUpload(file);
     }
   }
 
-  const onFileDropped = (e: DragEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log('hello!!!')
+  const onUpload = async (file) => {
+    const base64 = await blobToData(file);
+    application.addImageLayer(base64);
   }
 
   const handleToolSelected = (toolId: number): void => {
@@ -42,7 +45,7 @@ function App() {
 
   return (
     <div className="App flex flex-col h-screen w-screen bg-slate-200 relative">
-      <Dropzone onFileDropped={onFileDropped} />
+      <Dropzone onFilesDropped={onFilesDropped} />
 
       <div className='flex h-full w-full flex-1 relative'>
         <Canvas application={application} />

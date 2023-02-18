@@ -1,5 +1,5 @@
 import { clamp } from "@/util/math";
-import { Container, Sprite, Graphics } from "pixi.js"
+import { Container, Sprite, Graphics, Point } from "pixi.js"
 
 
 // Canvas is a class that contains a container, all images / image manipulation are managed in this class
@@ -38,9 +38,11 @@ export default class FeatureApplicationCanvas {
     }
 
     // addImage
-    addImage(base64: string): void {
+    addImage(position: Point, base64: string): void {
         const image: Sprite = Sprite.from(base64);
         image.anchor.set(0.5);
+        image.x = position.x;
+        image.y = position.y;
         this.#scene.addChild(image);
         this.#imageLayers.push(image);
     }
