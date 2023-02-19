@@ -41,9 +41,9 @@ export default class FeatureApplication {
         this.#application = new Application({
             width,
             height,
-            backgroundColor: 0x333333,
+            backgroundAlpha: 0,
             resolution: window.devicePixelRatio || 1,
-            autoDensity: true
+            autoDensity: true,
         });
 
         settings.SCALE_MODE = SCALE_MODES.NEAREST;

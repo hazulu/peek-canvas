@@ -5,6 +5,7 @@ import FeatureApplication from "../../classes/application";
 import { retrieveImageFromClipboardAsBlob, blobToData } from "../../services/clipboard";
 import Dropzone from "Components/dropzone";
 import LayerWidget from "Components/layer-widget";
+import SettingsModal from '@/components/settings';
 
 const application = new FeatureApplication(600, 400, {})
 
@@ -12,12 +13,21 @@ function App() {
     const [selectedTool, setSelectedTool] = useState(0);
     const [selectedLayer, setSelectedLayer] = useState(0);
     const [layerCount, setLayerCount] = useState(0);
+    const [overlayState, setOverlayState] = useState(false);
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [canvasBackgroundColor, setCanvasBackgroundColor] = useState('333333');
+    const [overlayOpacity, setOverlayOpacity] = useState(50);
 
     useEffect(() => {
         window.addEventListener("paste", onPaste);
+        const stopListeningToOverlayStateChange = window.electronAPI.handleOverlayStateChange(onOverlayStateChange);
+        const stopListeningForSettings = window.electronAPI.handleRetrieveSettings(handleLoadSettings);
+        window.electronAPI.retrieveSettings();
 
         return () => {
             window.removeEventListener('paste', onPaste);
+            stopListeningToOverlayStateChange();
+            stopListeningForSettings();
         };
     }, []);
 
@@ -27,6 +37,19 @@ function App() {
         return () => window.removeEventListener('keyup', onKeyUp);
     }, [selectedLayer, layerCount]);
 
+    const handleLoadSettings = (event, settings) => {
+        console.log(settings);
+        const {
+            overlayOpacity,
+            canvasBackgroundColor,
+        } = settings;
+
+        setOverlayOpacity(overlayOpacity);
+        setCanvasBackgroundColor(canvasBackgroundColor);
+    }
+
+    const onOverlayStateChange = (e, overlayState: boolean) => setOverlayState(overlayState);
+
     const onPaste = (e: ClipboardEvent) => {
         const clipboardImage = retrieveImageFromClipboardAsBlob(e);
 
@@ -35,7 +58,6 @@ function App() {
 
     const onKeyUp = (e: KeyboardEvent): void => {
         const key = e.key;
-        console.log(key);
         let nextLayer;
 
         switch (key) {
@@ -82,6 +104,8 @@ function App() {
         application.selectLayer(layerCount - 1);
     }
 
+    const handleShowSettings = () => setShowSettingsModal(true);
+
     const handleToolSelected = (toolId: number): void => {
         setSelectedTool(toolId);
         application.selectTool(toolId);
@@ -106,14 +130,52 @@ function App() {
         }
     }
 
+    const handleSaveSettings = (overlayOpacity: number, canvasBackgroundColor: string): void => {
+        // Only changes are passed into function.
+        let changedSettings = {};
+
+        if (overlayOpacity) {
+            changedSettings.overlayOpacity = overlayOpacity;
+            setOverlayOpacity(overlayOpacity);
+        }
+
+        if (canvasBackgroundColor) {
+            changedSettings.canvasBackgroundColor = canvasBackgroundColor;
+            setCanvasBackgroundColor(canvasBackgroundColor);
+        }
+
+        setShowSettingsModal(false);
+        window.electronAPI.saveSettings(changedSettings);
+    };
+
     return (
-        <div className="App flex flex-col h-screen w-screen bg-slate-200 relative">
+        <div className="App flex flex-col h-screen w-screen relative" style={{ background: `#${canvasBackgroundColor}` }}>
             <Dropzone onFilesDropped={onFilesImported} />
+            <SettingsModal
+                show={showSettingsModal}
+                overlayOpacity={overlayOpacity}
+                canvasBackgroundColor={canvasBackgroundColor}
+                onSaveSettings={handleSaveSettings}
+            />
 
             <div className='flex h-full w-full flex-1 relative'>
                 <Canvas application={application} />
-                <Toolbar selectedTool={selectedTool} onToolSelected={handleToolSelected} onImportImage={onFilesImported} />
-                <LayerWidget selectedLayer={selectedLayer} layerCount={layerCount} onLayerSelected={handleLayerSelected} onLayerDeleted={handleLayerDeleted} />
+
+                <Toolbar
+                    onShowOptions={handleShowSettings}
+                    selectedTool={selectedTool}
+                    onToolSelected={handleToolSelected}
+                    onImportImage={onFilesImported}
+                    inOverlayState={overlayState}
+                />
+
+                <LayerWidget
+                    selectedLayer={selectedLayer}
+                    layerCount={layerCount}
+                    onLayerSelected={handleLayerSelected}
+                    onLayerDeleted={handleLayerDeleted}
+                    inOverlayState={overlayState}
+                />
             </div>
         </div>
     )

@@ -1,9 +1,25 @@
 import { contextBridge, ipcRenderer, ipcMain } from 'electron'
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  setTitle: (title) => ipcRenderer.send('set-title', title),
-//   loadPreferences: () => ipcRenderer.invoke('load-prefs')
-
+//   loadPreferences: () => ipcRenderer.invoke('load-prefs'),
+  retrieveSettings: () => {
+    ipcRenderer.send('retrieve-settings');
+  },
+  handleRetrieveSettings: (callback) => {
+    ipcRenderer.on('load-settings', callback);
+    return () => {
+      ipcRenderer.removeListener('load-settings', callback);
+    };
+  },
+  saveSettings: (settings) => {
+    ipcRenderer.send('save-settings', settings);
+  },
+  handleOverlayStateChange: (callback) => {
+    ipcRenderer.on('overlay-state', callback);
+    return () => {
+      ipcRenderer.removeListener('overlay-state', callback);
+    };
+  },
 })
 
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {

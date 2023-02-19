@@ -8,9 +8,10 @@ type LayerWidgetProps = {
     layerCount: number,
     onLayerSelected: Function,
     onLayerDeleted: Function,
+    inOverlayState: boolean,
 }
 
-const LayerWidget: FunctionComponent<LayerWidgetProps> = ({ selectedLayer = 0, layerCount = 0, onLayerSelected, onLayerDeleted }: LayerWidgetProps) => {
+const LayerWidget: FunctionComponent<LayerWidgetProps> = ({ selectedLayer = 0, layerCount = 0, onLayerSelected, onLayerDeleted, inOverlayState }: LayerWidgetProps) => {
 
     const handleLayerCycle = () => {
         let next = selectedLayer + 1;
@@ -21,7 +22,7 @@ const LayerWidget: FunctionComponent<LayerWidgetProps> = ({ selectedLayer = 0, l
     const handleLayerDelete = () => onLayerDeleted(selectedLayer);
 
     return (
-        <div className="block absolute bottom-2 right-2 select-none">
+        <div data-enabled={!inOverlayState} className="block transition-all duration-75 absolute bottom-2 right-2 select-none opacity-0 data-[enabled=true]:opacity-100">
             <div className="flex flex-row bg-neutral-700 border border-neutral-500 p-2 rounded-lg space-x-2 select-none shadow-md text-neutral-50">
                 <ToolbarButton onClick={handleLayerCycle}>
                     <div className='flex'>

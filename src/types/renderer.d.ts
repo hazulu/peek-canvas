@@ -1,5 +1,8 @@
 export interface IElectronAPI {
-  setTitle: (title: number) => Promise<void>,
+  retrieveSettings: () => Promise<void>,
+  handleRetrieveSettings: (cb: Function) => Promise,
+  saveSettings: (settings) => Promise<void>,
+  handleOverlayStateChange: (cb: Function) => Promise,
 }
   
 declare global {

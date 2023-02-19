@@ -1,6 +1,8 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
+import { getOrInitializeSettings, UserSettings } from '../services/settings'
+import settings from 'electron-settings';
 
 // The built directory structure
 //
@@ -45,21 +47,17 @@ async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     icon: join(process.env.PUBLIC, 'favicon.ico'),
-    // transparent: true,
-    // backgroundColor: '#00FFFFFF',
     // frame: false,
     minWidth: 400,
     minHeight: 400, 
     show: false,
     webPreferences: {
       preload,
-      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
-      // Consider using contextBridge.exposeInMainWorld
-      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
       contextIsolation: true,
     },
-  })
+  });
+  win.setMenu(null);
 
   var splash = new BrowserWindow({
     width: 640, 
@@ -67,29 +65,19 @@ async function createWindow() {
     transparent: true, 
     frame: false, 
     alwaysOnTop: true 
-  })
-
-  splash.loadFile(splashHtml)
-  
-  // win.setIgnoreMouseEvents(true);
-  // win.setAlwaysOnTop(true);
-  // win.setFocusable(false);
-  // win.setOpacity(0.5)
-  // win.webContents.openDevTools({mode:'undocked'})
-  win.setMenu(null);
+  });
+  splash.loadFile(splashHtml);
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
-    win.loadURL(url)
+    win.loadURL(url);
     // Open devTool if the app is not packaged
-    win.webContents.openDevTools()
+    win.webContents.openDevTools();
   } else {
-    win.loadFile(indexHtml)
+    win.loadFile(indexHtml);
   }
 
-  // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
     registerListeners(win);
-    win?.webContents.send('main-process-message', new Date().toLocaleString())
     setTimeout(() => {
       win?.show();
       splash?.destroy();
@@ -103,7 +91,19 @@ async function createWindow() {
   })
 }
 
-app.whenReady().then(createWindow)
+
+// let canvasBackgroundColor, overlayOpacity, overlayKeybind;
+
+// const userSettings = getOrInitializeSettings()
+//   .then(settings => {
+//     canvasBackgroundColor = settings.canvasBackgroundColor;
+//     overlayOpacity = settings.overlayOpacity;
+//     overlayKeybind = settings.overlayKeybind;
+//   });
+
+app.whenReady()
+  .then(getOrInitializeSettings)
+  .then(createWindow)
 
 app.on('window-all-closed', () => {
   win = null
@@ -144,10 +144,49 @@ ipcMain.handle('open-win', (_, arg) => {
   }
 })
 
+let overlayState = false;
+
 const registerListeners = (window: BrowserWindow) : void => {
-  ipcMain.on('set-title', (event, title) => {
-    const webContents = event.sender
-    const win = BrowserWindow.fromWebContents(webContents)
-    win.setTitle(`${title}`)
+
+  ipcMain.on('retrieve-settings', async (event) => {
+    const canvasBackgroundColor = await settings.get('canvasBackgroundColor') as string;
+    const overlayOpacity = await settings.get('overlayOpacity') as number;
+
+    event.reply('load-settings', {
+      canvasBackgroundColor,
+      overlayOpacity: Math.floor(overlayOpacity / 100),
+    })
+  });
+
+  ipcMain.on('save-settings', async (event, userSettings: UserSettings) => {
+    const { canvasBackgroundColor, overlayOpacity } = userSettings;
+
+    console.log(userSettings);
+
+    if (canvasBackgroundColor)
+      await settings.set('canvasBackgroundColor', canvasBackgroundColor);
+    if (overlayOpacity)
+      await settings.set('overlayOpacity', Math.floor(parseInt(overlayOpacity) / 100));
+  });
+
+  globalShortcut.register('Alt+CommandOrControl+I', async () => {
+    const opacity = await settings.get('overlayOpacity') as number;
+
+    if (overlayState) {
+      win.setIgnoreMouseEvents(false);
+      win.setAlwaysOnTop(false);
+      win.setFocusable(true);
+      win.setOpacity(1)
+      win.setTitle('Peek Canvas');
+      win.webContents.send('overlay-state', false);
+    } else {
+      win.setIgnoreMouseEvents(true);
+      win.setAlwaysOnTop(true);
+      win.setFocusable(false);
+      win.setOpacity(opacity)
+      win.setTitle('Peek Canvas (Overlay Mode)');
+      win.webContents.send('overlay-state', true);
+    }
+    overlayState = !overlayState;
   })
 }

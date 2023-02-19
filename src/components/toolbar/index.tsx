@@ -8,12 +8,14 @@ import UploadImageIcon from 'Components/icons/upload-image';
 import OptionsIcon from 'Components/icons/options';
 
 type ToolbarProps = {
+    onShowOptions: Function,
     selectedTool: number,
     onToolSelected: Function,
-    onImportImage: Function
+    onImportImage: Function,
+    inOverlayState: boolean
 }
 
-const Toolbar: FunctionComponent<ToolbarProps> = ({ selectedTool, onToolSelected, onImportImage }: ToolbarProps) => {
+const Toolbar: FunctionComponent<ToolbarProps> = ({ onShowOptions, selectedTool, onToolSelected, onImportImage, inOverlayState }: ToolbarProps) => {
 
     const handleToolSelected = (toolId: number) => {
         onToolSelected(toolId);
@@ -25,9 +27,9 @@ const Toolbar: FunctionComponent<ToolbarProps> = ({ selectedTool, onToolSelected
     }
 
     return (
-        <div className="block absolute bottom-2 left-2 select-none">
+        <div data-enabled={!inOverlayState} className="block transition-all duration-75 absolute bottom-2 left-2 select-none opacity-0 data-[enabled=true]:opacity-100">
             <div className="flex flex-row bg-neutral-700 border border-neutral-500 p-2 rounded-lg space-x-2 select-none shadow-md">
-                <ToolbarButton onClick={e => null}>
+                <ToolbarButton onClick={() => onShowOptions()}>
                     <OptionsIcon className="w-6 h-6" />
                 </ToolbarButton>
                 <ToolbarDivider />
