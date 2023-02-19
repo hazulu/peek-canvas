@@ -27,7 +27,8 @@ const SettingsModal: FunctionComponent<SettingsModalProps> = ({ show, overlayOpa
         if (canvasBackgroundColor != canvasBackgroundColorSetting)
             newCanvasBackgroundColor = canvasBackgroundColorSetting;
 
-        onSaveSettings(newOverlayOpacity, newCanvasBackgroundColor);
+        if (newOverlayOpacity || newCanvasBackgroundColor)
+            onSaveSettings(newOverlayOpacity, newCanvasBackgroundColor);
     }
 
     return (

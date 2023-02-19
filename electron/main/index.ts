@@ -156,8 +156,6 @@ const registerListeners = (window: BrowserWindow) : void => {
   ipcMain.on('save-settings', (event, userSettings: UserSettings) => {
     const { canvasBackgroundColor, overlayOpacity } = userSettings;
 
-    console.log(userSettings);
-
     if (canvasBackgroundColor)
       store.set('canvasBackgroundColor', canvasBackgroundColor);
     if (overlayOpacity)

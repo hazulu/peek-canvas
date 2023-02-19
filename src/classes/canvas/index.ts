@@ -20,7 +20,7 @@ export default class FeatureApplicationCanvas {
     setupOriginSquare(): void {
         const square = new Graphics();
         square.beginFill(0xffffff);
-        square.drawRect(0, 0, 32, 32);
+        square.drawRect(0, 0, 4, 4);
         square.endFill();
         this.#scene.addChild(square);
     }
