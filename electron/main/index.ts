@@ -2,7 +2,7 @@ import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
 import { getOrInitializeSettings, UserSettings } from '../services/settings'
-import settings from 'electron-settings';
+import Store from 'electron-store';
 
 // The built directory structure
 //
@@ -42,6 +42,8 @@ const preload = join(__dirname, '../preload/index.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
 const splashHtml = join(__dirname, '../../public/splash.html')
+
+const store = new Store();
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -91,18 +93,11 @@ async function createWindow() {
   })
 }
 
-
-// let canvasBackgroundColor, overlayOpacity, overlayKeybind;
-
-// const userSettings = getOrInitializeSettings()
-//   .then(settings => {
-//     canvasBackgroundColor = settings.canvasBackgroundColor;
-//     overlayOpacity = settings.overlayOpacity;
-//     overlayKeybind = settings.overlayKeybind;
-//   });
-
 app.whenReady()
-  .then(getOrInitializeSettings)
+  .then(() => {
+    store.delete('overlayOpacity');
+    getOrInitializeSettings(store);
+  })
   .then(createWindow)
 
 app.on('window-all-closed', () => {
@@ -148,29 +143,28 @@ let overlayState = false;
 
 const registerListeners = (window: BrowserWindow) : void => {
 
-  ipcMain.on('retrieve-settings', async (event) => {
-    const canvasBackgroundColor = await settings.get('canvasBackgroundColor') as string;
-    const overlayOpacity = await settings.get('overlayOpacity') as number;
+  ipcMain.on('retrieve-settings', (event) => {
+    const canvasBackgroundColor = store.get('canvasBackgroundColor') as string;
+    const overlayOpacity = store.get('overlayOpacity') as number;
 
     event.reply('load-settings', {
       canvasBackgroundColor,
-      overlayOpacity: Math.floor(overlayOpacity / 100),
+      overlayOpacity: overlayOpacity,
     })
   });
 
-  ipcMain.on('save-settings', async (event, userSettings: UserSettings) => {
+  ipcMain.on('save-settings', (event, userSettings: UserSettings) => {
     const { canvasBackgroundColor, overlayOpacity } = userSettings;
 
     console.log(userSettings);
 
     if (canvasBackgroundColor)
-      await settings.set('canvasBackgroundColor', canvasBackgroundColor);
+      store.set('canvasBackgroundColor', canvasBackgroundColor);
     if (overlayOpacity)
-      await settings.set('overlayOpacity', Math.floor(parseInt(overlayOpacity) / 100));
+      store.set('overlayOpacity', overlayOpacity);
   });
 
-  globalShortcut.register('Alt+CommandOrControl+I', async () => {
-    const opacity = await settings.get('overlayOpacity') as number;
+  globalShortcut.register('Alt+CommandOrControl+O', () => {
 
     if (overlayState) {
       win.setIgnoreMouseEvents(false);
@@ -180,10 +174,11 @@ const registerListeners = (window: BrowserWindow) : void => {
       win.setTitle('Peek Canvas');
       win.webContents.send('overlay-state', false);
     } else {
+      const opacity = store.get('overlayOpacity') as number;
       win.setIgnoreMouseEvents(true);
       win.setAlwaysOnTop(true);
       win.setFocusable(false);
-      win.setOpacity(opacity)
+      win.setOpacity(opacity / 100)
       win.setTitle('Peek Canvas (Overlay Mode)');
       win.webContents.send('overlay-state', true);
     }

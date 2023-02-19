@@ -1,4 +1,4 @@
-import electron_settings from 'electron-settings';
+import Store from 'electron-store';
 
 export type UserSettings = {
     canvasBackgroundColor: string,
@@ -7,30 +7,30 @@ export type UserSettings = {
 }
 
 const defaultSettings: UserSettings = {
-    canvasBackgroundColor: '#333333',
-    overlayOpacity: 0.5,
+    canvasBackgroundColor: '333333',
+    overlayOpacity: 50,
     // overlayKeybind: 'Alt+CommandOrControl+I',
 }
 
-export async function getOrInitializeSettings(): Promise<UserSettings> {
+export function getOrInitializeSettings(store: Store): UserSettings {
 
-    let canvasBackgroundColor = await electron_settings.get('canvasBackgroundColor') as string;
+    let canvasBackgroundColor = store.get('canvasBackgroundColor') as string;
     if (!canvasBackgroundColor) {
         canvasBackgroundColor = defaultSettings.canvasBackgroundColor;
-        await electron_settings.set('canvasBackgroundColor', defaultSettings.canvasBackgroundColor);
+        store.set('canvasBackgroundColor', defaultSettings.canvasBackgroundColor);
     }
 
-    let overlayOpacity = await electron_settings.get('overlayOpacity') as number;
+    let overlayOpacity = store.get('overlayOpacity') as number;
     if (!overlayOpacity) {
         overlayOpacity = defaultSettings.overlayOpacity;
-        await electron_settings.set('overlayOpacity', defaultSettings.overlayOpacity);
+        store.set('overlayOpacity', defaultSettings.overlayOpacity);
     }
 
 
-    // let overlayKeybind = await electron_settings.get('overlayKeybind') as string;
+    // let overlayKeybind = store.get('overlayKeybind') as string;
     // if (!overlayKeybind) {
     //     overlayKeybind = defaultSettings.overlayKeybind;
-    //     await electron_settings.set('overlayKeybind', defaultSettings.overlayKeybind);
+    //     store.set('overlayKeybind', defaultSettings.overlayKeybind);
     // }
 
     return {
