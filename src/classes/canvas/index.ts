@@ -37,7 +37,8 @@ export default class FeatureApplicationCanvas {
 
     setLayerOpacity(opacity: number, layerId: number): void {
         const layer = this.#imageLayers[layerId];
-        layer.alpha = opacity;
+
+        if (layer) layer.alpha = opacity;
     }
 
     getLayerCount(): number {

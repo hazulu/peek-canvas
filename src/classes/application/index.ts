@@ -198,11 +198,14 @@ export default class FeatureApplication {
     }
 
     selectLayer(layerId: number): void {
+        if (this.getLayerCount() <= 0)
+            return;
+
         if (this.#flickerTimer != undefined)
             this.resetFlicker(this.#selectedLayer);
 
         const interval = this.onFlicker.bind(this);
-        this.#flickerTimer = setInterval(() => interval(layerId), 90);
+        this.#flickerTimer = setInterval(() => interval(layerId), 110);
 
         this.#selectedLayer = layerId;
     }

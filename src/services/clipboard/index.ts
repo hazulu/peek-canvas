@@ -1,7 +1,5 @@
 // https://ourcodeworld.com/articles/read/491/how-to-retrieve-images-from-the-clipboard-with-javascript-in-the-browser
 export const retrieveImageFromClipboardAsBlob = (pasteEvent: ClipboardEvent): Blob | null => {
-    console.log(pasteEvent);
-
     if (pasteEvent.clipboardData) {
         var items = pasteEvent.clipboardData.items;
 
