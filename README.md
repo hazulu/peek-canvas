@@ -12,7 +12,7 @@ Peek Canvas is designed to streamline your overlaying experience:
 2. Import images into the canvas (Attaching, Dragging Over, or Pasting) and position them as desired.
 3. Activate Overlay Mode with: **Alt + Ctrl/Command + O**.
 
-## Demo
+## 📽️ Demo
 
 ![electron-vite-react.gif](/public/demo.gif)
 
