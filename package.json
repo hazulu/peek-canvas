@@ -1,10 +1,10 @@
 {
-  "name": "electron-vite-react",
-  "version": "2.1.0",
+  "name": "peek-canvas",
+  "version": "1.0.0",
   "main": "dist-electron/main/index.js",
-  "description": "Electron Vite React boilerplate.",
-  "author": "草鞋没号 <308487730@qq.com>",
-  "license": "MIT",
+  "description": "",
+  "author": "",
+  "license": "",
   "private": true,
   "debug": {
     "env": {
@@ -22,11 +22,14 @@
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.0.1",
+    "autoprefixer": "^10.4.13",
     "electron": "^22.0.3",
     "electron-builder": "^23.6.0",
+    "postcss": "^8.4.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sass": "^1.57.1",
+    "tailwindcss": "^3.2.6",
     "typescript": "^4.9.4",
     "vite": "^4.0.4",
     "vite-electron-plugin": "^0.7.4",
@@ -34,5 +37,13 @@
   },
   "engines": {
     "node": "^14.18.0 || >=16.0.0"
+  },
+  "dependencies": {
+    "@pixi/unsafe-eval": "^6.5.9",
+    "electron-store": "^8.1.0",
+    "pixi-viewport": "^4.38.0",
+    "pixi.js": "^6.5.9",
+    "react-router-dom": "^6.8.1",
+    "vite-tsconfig-paths": "^4.0.5"
   }
 }

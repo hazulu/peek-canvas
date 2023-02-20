@@ -19,7 +19,10 @@
     "paths": {
       "@/*": [
         "src/*"
-      ]
+      ],
+      "Components/*": [ "./src/components/*" ],
+      "Classes/*": [ "./src/classes/*" ],
+      "Services/*": [ "./src/services/*" ],
     },
   },
   "include": ["src"],

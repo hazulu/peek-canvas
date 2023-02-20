@@ -1,6 +1,8 @@
-import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
+import { getOrInitializeSettings, UserSettings } from '../services/settings'
+import Store from 'electron-store';
 
 // The built directory structure
 //
@@ -39,32 +41,51 @@ let win: BrowserWindow | null = null
 const preload = join(__dirname, '../preload/index.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
+const splashScreenSrc = app.isPackaged
+  ? join(process.resourcesPath, 'splash', 'splash.html')
+  : join(__dirname, '../../splash/', 'splash.html');
+
+const store = new Store();
 
 async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     icon: join(process.env.PUBLIC, 'favicon.ico'),
+    // frame: false,
+    minWidth: 400,
+    minHeight: 400, 
+    show: false,
     webPreferences: {
       preload,
-      // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
-      // Consider using contextBridge.exposeInMainWorld
-      // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
     },
-  })
+  });
+  win.setMenu(null);
+
+  var splash = new BrowserWindow({
+    width: 640, 
+    height: 402,
+    transparent: true, 
+    frame: false, 
+    alwaysOnTop: true 
+  });
+  splash.loadFile(splashScreenSrc);
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
-    win.loadURL(url)
+    win.loadURL(url);
     // Open devTool if the app is not packaged
-    win.webContents.openDevTools()
+    win.webContents.openDevTools();
   } else {
-    win.loadFile(indexHtml)
+    win.loadFile(indexHtml);
   }
 
-  // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', new Date().toLocaleString())
+    registerListeners(win);
+    setTimeout(() => {
+      win?.show();
+      splash?.destroy();
+    }, 500)
   })
 
   // Make all links open with the browser, not with the application
@@ -74,7 +95,12 @@ async function createWindow() {
   })
 }
 
-app.whenReady().then(createWindow)
+app.whenReady()
+  .then(() => {
+    store.delete('overlayOpacity');
+    getOrInitializeSettings(store);
+  })
+  .then(createWindow)
 
 app.on('window-all-closed', () => {
   win = null
@@ -114,3 +140,48 @@ ipcMain.handle('open-win', (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
 })
+
+let overlayState = false;
+
+const registerListeners = (window: BrowserWindow) : void => {
+
+  ipcMain.on('retrieve-settings', (event) => {
+    const canvasBackgroundColor = store.get('canvasBackgroundColor') as string;
+    const overlayOpacity = store.get('overlayOpacity') as number;
+
+    event.reply('load-settings', {
+      canvasBackgroundColor,
+      overlayOpacity: overlayOpacity,
+    })
+  });
+
+  ipcMain.on('save-settings', (event, userSettings: UserSettings) => {
+    const { canvasBackgroundColor, overlayOpacity } = userSettings;
+
+    if (canvasBackgroundColor)
+      store.set('canvasBackgroundColor', canvasBackgroundColor);
+    if (overlayOpacity)
+      store.set('overlayOpacity', overlayOpacity);
+  });
+
+  globalShortcut.register('Alt+CommandOrControl+O', () => {
+
+    if (overlayState) {
+      win.setIgnoreMouseEvents(false);
+      win.setAlwaysOnTop(false);
+      win.setFocusable(true);
+      win.setOpacity(1)
+      win.setTitle('Peek Canvas');
+      win.webContents.send('overlay-state', false);
+    } else {
+      const opacity = store.get('overlayOpacity') as number;
+      win.setIgnoreMouseEvents(true);
+      win.setAlwaysOnTop(true);
+      win.setFocusable(false);
+      win.setOpacity(opacity / 100)
+      win.setTitle('Peek Canvas (Overlay Mode)');
+      win.webContents.send('overlay-state', true);
+    }
+    overlayState = !overlayState;
+  })
+}
