@@ -1,10 +1,10 @@
 {
-  "name": "electron-vite-react",
-  "version": "2.1.0",
+  "name": "peek-canvas",
+  "version": "1.0.0",
   "main": "dist-electron/main/index.js",
   "description": "",
   "author": "",
-  "license": "MIT",
+  "license": "",
   "private": true,
   "debug": {
     "env": {

@@ -27,12 +27,11 @@ const SettingsModal: FunctionComponent<SettingsModalProps> = ({ show, overlayOpa
         if (canvasBackgroundColor != canvasBackgroundColorSetting)
             newCanvasBackgroundColor = canvasBackgroundColorSetting;
 
-        if (newOverlayOpacity || newCanvasBackgroundColor)
-            onSaveSettings(newOverlayOpacity, newCanvasBackgroundColor);
+        onSaveSettings(newOverlayOpacity, newCanvasBackgroundColor);
     }
 
     return (
-        <div data-enabled={show} className="flex bg-neutral-900 pointer-events-none transition-all duration-75 justify-center items-center absolute inset-0 z-10 opacity-0 data-[enabled=true]:opacity-90 data-[enabled=true]:pointer-events-auto select-none">
+        <div data-enabled={show} className="flex bg-neutral-900 pointer-events-none transition-all duration-75 justify-center items-center absolute inset-0 z-10 opacity-0 data-[enabled=true]:opacity-100 data-[enabled=true]:pointer-events-auto select-none">
             <div className='flex flex-col w-4/5 h-4/5 p-10 bg-neutral-700 rounded-lg border border-2 border-neutral-600' style={{maxWidth: '400px', maxHeight: '400px'}}>
                 <div className='text-white'>
                     <label htmlFor='overlayOpacitySetting' className='block mb-2 text-md font-medium text-gray-50'>Overlay Opacity:</label>
@@ -43,7 +42,7 @@ const SettingsModal: FunctionComponent<SettingsModalProps> = ({ show, overlayOpa
                             type='range'
                             value={overlayOpacitySetting}
                             className='flex flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700'
-                            onChange={(e) => setOverlayOpacitySetting(e.target.value)}
+                            onChange={(e) => setOverlayOpacitySetting(parseInt(e.target.value))}
                         />
                         <div className='flex justify-center font-semibold text-lg ml-2 w-1/6'>
                             {overlayOpacitySetting}%

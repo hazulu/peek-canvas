@@ -1,14 +1,14 @@
-# electron-vite-react
+## Overview
 
-[![awesome-vite](https://awesome.re/mentioned-badge.svg)](https://github.com/vitejs/awesome-vite)
-![GitHub stars](https://img.shields.io/github/stars/caoxiemeihao/vite-react-electron?color=fa6470)
-![GitHub issues](https://img.shields.io/github/issues/caoxiemeihao/vite-react-electron?color=d8b22d)
-![GitHub license](https://img.shields.io/github/license/caoxiemeihao/vite-react-electron)
-[![Required Node.JS >= 14.18.0 || >=16.0.0](https://img.shields.io/static/v1?label=node&message=14.18.0%20||%20%3E=16.0.0&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
+Have you ever needed to overlay images on top of your screen?
 
-English | [简体中文](README.zh-CN.md)
+If you have, you might have used other programs currently available. This isn't really a problem, but they generally control *other* windows, which means you need to BYOC (bring your own canvas). This can lead to a lot of set-up that Peek Canvas aims to solve.
 
-## 👀 Overview
+Peek Canvas is designed to streamline your overlaying experience:
+
+1. Open and resize Peek Canvas to cover where you want the overlay.
+2. Import images into the canvas (Pasting, Dragging Over, or Attaching), and position as desired.
+3. Activate Overlay Mode with: **Alt + Ctrl/Command + O**.
 
 📦 Ready out of the box  
 🎯 Based on the official [template-react-ts](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts), project structure will be familiar to you  
@@ -53,24 +53,10 @@ Familiar React application structure, just with `electron` folder on the top :wi
 
 This template integrates Node.js API to the renderer process by default. If you want to follow **Electron Security Concerns** you might want to disable this feature. You will have to expose needed API by yourself.  
 
-To get started, remove the option as shown below. This will [modify the Vite configuration and disable this feature](https://github.com/electron-vite/vite-plugin-electron-renderer#config-presets-opinionated).
-
-```diff
-# vite.config.ts
-
-export default {
-  plugins: [
-    ...
--   // Use Node.js API in the Renderer-process
--   renderer({
--     nodeIntegration: true,
--   }),
-    ...
-  ],
-}
-```
-
-## ❔ FAQ
-
-- [dependencies vs devDependencies](https://github.com/electron-vite/vite-plugin-electron-renderer#dependencies-vs-devdependencies)
-- [C/C++ addons, Node.js modules - Pre-Bundling](https://github.com/electron-vite/vite-plugin-electron-renderer#dependency-pre-bundling)
+## ⌨️ Keybind Shortcuts
+- **Alt + Ctrl/Command + O**: Activate Overlay Mode
+- **Delete**: Remove Selected Layer
+- **[**: Down One Layer
+- **]**: Up One Layer
+- **V**: Select Move Tool
+- **T**: Select Transform Tool

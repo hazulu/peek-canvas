@@ -41,7 +41,9 @@ let win: BrowserWindow | null = null
 const preload = join(__dirname, '../preload/index.js')
 const url = process.env.VITE_DEV_SERVER_URL
 const indexHtml = join(process.env.DIST, 'index.html')
-const splashHtml = join(__dirname, '../../public/splash.html')
+const splashScreenSrc = app.isPackaged
+  ? join(process.resourcesPath, 'splash', 'splash.html')
+  : join(__dirname, '../../splash/', 'splash.html');
 
 const store = new Store();
 
@@ -68,7 +70,7 @@ async function createWindow() {
     frame: false, 
     alwaysOnTop: true 
   });
-  splash.loadFile(splashHtml);
+  splash.loadFile(splashScreenSrc);
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url);

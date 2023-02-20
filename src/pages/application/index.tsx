@@ -6,6 +6,7 @@ import { retrieveImageFromClipboardAsBlob, blobToData } from "../../services/cli
 import Dropzone from "Components/dropzone";
 import LayerWidget from "Components/layer-widget";
 import SettingsModal from '@/components/settings';
+import { UserSettingChanges } from '@/types/settings';
 
 const application = new FeatureApplication(600, 400, {})
 
@@ -37,8 +38,7 @@ function App() {
         return () => window.removeEventListener('keyup', onKeyUp);
     }, [selectedLayer, layerCount]);
 
-    const handleLoadSettings = (event, settings) => {
-        console.log(settings);
+    const handleLoadSettings = (event: string, settings: any) => {
         const {
             overlayOpacity,
             canvasBackgroundColor,
@@ -48,10 +48,10 @@ function App() {
         setCanvasBackgroundColor(canvasBackgroundColor);
     }
 
-    const onOverlayStateChange = (e, overlayState: boolean) => setOverlayState(overlayState);
+    const onOverlayStateChange = (e: string, overlayState: boolean) => setOverlayState(overlayState);
 
-    const onPaste = (e: ClipboardEvent) => {
-        const clipboardImage = retrieveImageFromClipboardAsBlob(e);
+    const onPaste = (e: Event) => {
+        const clipboardImage = retrieveImageFromClipboardAsBlob(e as ClipboardEvent);
 
         if (clipboardImage) onImport(clipboardImage);
     }
@@ -89,16 +89,16 @@ function App() {
         }
     }
 
-    const onFilesImported = (files) => {
+    const onFilesImported = (files: Array<File>) => {
         if (files) {
             const file = files[0];
             onImport(file);
         }
     }
 
-    const onImport = async (file) => {
+    const onImport = async (file: Blob) => {
         const base64 = await blobToData(file);
-        let layerCount = application.addImageLayer(base64);
+        let layerCount = application.addImageLayer(base64 as string);
         setLayerCount(layerCount);
         setSelectedLayer(layerCount - 1);
         application.selectLayer(layerCount - 1);
@@ -132,20 +132,23 @@ function App() {
 
     const handleSaveSettings = (overlayOpacity: number, canvasBackgroundColor: string): void => {
         // Only changes are passed into function.
-        let changedSettings = {};
+        if (overlayOpacity || canvasBackgroundColor) {
+            let changedSettings: UserSettingChanges = {};
 
-        if (overlayOpacity) {
-            changedSettings.overlayOpacity = overlayOpacity;
-            setOverlayOpacity(overlayOpacity);
-        }
+            if (overlayOpacity) {
+                changedSettings.overlayOpacity = overlayOpacity;
+                setOverlayOpacity(overlayOpacity);
+            }
 
-        if (canvasBackgroundColor) {
-            changedSettings.canvasBackgroundColor = canvasBackgroundColor;
-            setCanvasBackgroundColor(canvasBackgroundColor);
+            if (canvasBackgroundColor) {
+                changedSettings.canvasBackgroundColor = canvasBackgroundColor;
+                setCanvasBackgroundColor(canvasBackgroundColor);
+            }
+
+            window.electronAPI.saveSettings(changedSettings);
         }
 
         setShowSettingsModal(false);
-        window.electronAPI.saveSettings(changedSettings);
     };
 
     return (

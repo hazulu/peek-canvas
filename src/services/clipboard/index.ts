@@ -19,7 +19,7 @@ export const retrieveImageFromClipboardAsBlob = (pasteEvent: ClipboardEvent): Bl
     return null;
 }
 
-export const blobToData = (blob: Blob) => {
+export const blobToData = (blob: Blob): Promise<string | null | ArrayBuffer> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result);

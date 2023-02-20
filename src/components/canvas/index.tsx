@@ -6,14 +6,16 @@ type CanvasProps = {
 }
 
 const Canvas: FunctionComponent<CanvasProps> = ({application}: CanvasProps) => {
-    const containerRef = useRef();
+    const containerRef = useRef<HTMLDivElement>(null);
     const [cursorStyle, setCursorStyle] = useState('cursor-auto');
 
     useEffect(() => {
         application.start(async (view: HTMLWebViewElement) => {
-            application.setParent(containerRef.current);
-            containerRef.current.appendChild(view);
-            application.onUpdateCursor(setCursor);
+            if (containerRef.current) {
+                application.setParent(containerRef.current);
+                containerRef.current.appendChild(view);
+                application.onUpdateCursor(setCursor);
+            }
         });
     }, []);
 
