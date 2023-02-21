@@ -23,6 +23,7 @@ Peek Canvas is designed to streamline your overlaying experience:
 - **]**: Up One Layer
 - **V**: Select Move Tool
 - **T**: Select Transform Tool
+- **Right Click Drag**: Grab/Move Canvas
 
 ## 🚨 Be aware
 
