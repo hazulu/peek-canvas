@@ -5,41 +5,13 @@ import ZoomOutIcon from 'Components/icons/zoom-out';
 import WidgetContainer from '../widget-container';
 import { clamp } from '@/util/math';
 
-type ZoomSliderProps = {
+type ZoomWidgetProps = {
     onChangeZoom: Function,
     currentZoom: number,
     inOverlayState: boolean
 }
 
-const ZoomSlider: FunctionComponent<ZoomSliderProps> = ({ onChangeZoom, currentZoom, inOverlayState }: ZoomSliderProps) => {
-
-    // const [zoomSliderValue, setZoomSliderValue] = useState(50);
-
-    // useEffect(() => {
-    //     // convert number to slider zoom
-    //     setZoomSliderValue(currentZoom * 100);
-    // }, [currentZoom])
-    
-    // const handleChangeZoom = (zoom: number) => {
-    //     // convert number to true zoom
-    //     const trueZoom = zoom / 100;
-    //     onChangeZoom(trueZoom, false);
-    // }
-
-    // return (
-    //     <div data-enabled={!inOverlayState} className="block transition-all duration-75 absolute top-2 right-4 select-none opacity-0 data-[enabled=true]:opacity-100">
-    //         <input id='trueZoom' hidden />
-    //         <input
-    //             id='zoomSlider'
-    //             type='range'
-    //             value={zoomSliderValue}
-    //             className='flex flex-1 h-3 origin-right -rotate-90 bg-neutral-600 border-2 border-neutral-700 rounded-lg appearance-none cursor-pointer'
-    //             onChange={(e) => handleChangeZoom(parseInt(e.target.value))}
-    //             min={25}
-    //             max={200}
-    //         />
-    //     </div>
-    // )
+const ZoomWidget: FunctionComponent<ZoomWidgetProps> = ({ onChangeZoom, currentZoom, inOverlayState }: ZoomWidgetProps) => {
 
     const handleZoomIn = ():void => {
         if (currentZoom >= 2) return;
@@ -68,4 +40,4 @@ const ZoomSlider: FunctionComponent<ZoomSliderProps> = ({ onChangeZoom, currentZ
     )
 }
 
-export default ZoomSlider
+export default ZoomWidget
