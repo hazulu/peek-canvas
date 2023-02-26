@@ -24,6 +24,7 @@ Peek Canvas is designed to streamline your overlaying experience:
 - **V**: Select Move Tool
 - **T**: Select Transform Tool
 - **Right Click Drag**: Grab/Move Canvas
+- **Scroll Wheel**: Zoom In/Out
 
 ## 🚨 Be aware
 
