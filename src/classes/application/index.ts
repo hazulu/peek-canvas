@@ -33,6 +33,7 @@ export default class FeatureApplication {
     #flickerState: FlickerState = 'off';
 
     #updateCursorEvent: Function | null = null;
+    #updateZoomEvent: Function | null = null;
 
     constructor(width: number, height: number, options: FeatureApplicationOptions | null) {
         // Install Unsafe-eval Fix For Pixi.js
@@ -66,6 +67,7 @@ export default class FeatureApplication {
         this.#viewport.on("mousemove", e => this.onViewportMouseMove(e));
         this.#viewport.on("drag-start", e => this.onViewportDragStart(e));
         this.#viewport.on("drag-end", e => this.onViewportDragEnd(e));
+        this.#viewport.on("zoomed", e => this.onViewportZoom(e));
 
         this.ready = true;
         this.update();
@@ -156,6 +158,11 @@ export default class FeatureApplication {
         };
     }
 
+    onViewportZoom(e: any): void {
+        if (e.viewport?.scale?.x)
+            this.updateZoom(e.viewport.scale.x);
+    }
+
     onViewportDragStart(e: InteractionEvent): void {
         this.#isDragging = true;
         this.updateCursor();
@@ -169,6 +176,10 @@ export default class FeatureApplication {
     onUpdateCursor(cb: Function): void {
         this.#updateCursorEvent = cb;
         this.updateCursor();
+    }
+
+    onUpdateZoom(cb: Function): void {
+        this.#updateZoomEvent = cb;
     }
 
     updateCursor(): void {
@@ -190,6 +201,12 @@ export default class FeatureApplication {
 
         if (typeof this.#updateCursorEvent === 'function')
             this.#updateCursorEvent(cursor);
+    }
+
+    updateZoom(zoom: number): void {
+        // pass zoom value into callback
+        if (this.#updateZoomEvent)
+            this.#updateZoomEvent(zoom);
     }
 
     selectTool(toolId: number): void {
@@ -254,6 +271,10 @@ export default class FeatureApplication {
                 this.#flickerState = 'on';
                 break;
         }
+    }
+
+    setZoom(zoom: number): void {
+        this.#viewport.setZoom(zoom, true);
     }
 
     update() : void {

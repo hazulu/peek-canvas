@@ -41,7 +41,7 @@ const SettingsModal: FunctionComponent<SettingsModalProps> = ({ show, overlayOpa
                             id='overlayOpacitySetting'
                             type='range'
                             value={overlayOpacitySetting}
-                            className='flex flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700'
+                            className='flex flex-1 h-3 bg-neutral-600 border-2 border-neutral-700 rounded-lg appearance-none cursor-pointer'
                             onChange={(e) => setOverlayOpacitySetting(parseInt(e.target.value))}
                         />
                         <div className='flex justify-center font-semibold text-lg ml-2 w-1/6'>

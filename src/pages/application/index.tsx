@@ -7,6 +7,7 @@ import Dropzone from "Components/dropzone";
 import LayerWidget from "Components/layer-widget";
 import SettingsModal from '@/components/settings';
 import { UserSettingChanges } from '@/types/settings';
+import ZoomWidget from '@/components/zoom-widget';
 
 const application = new FeatureApplication(600, 400, {})
 
@@ -14,6 +15,7 @@ function App() {
     const [selectedTool, setSelectedTool] = useState(0);
     const [selectedLayer, setSelectedLayer] = useState(0);
     const [layerCount, setLayerCount] = useState(0);
+    const [currentZoom, setCurrentZoom] = useState(1);
     const [overlayState, setOverlayState] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [canvasBackgroundColor, setCanvasBackgroundColor] = useState('333333');
@@ -24,6 +26,9 @@ function App() {
         const stopListeningToOverlayStateChange = window.electronAPI.handleOverlayStateChange(onOverlayStateChange);
         const stopListeningForSettings = window.electronAPI.handleRetrieveSettings(handleLoadSettings);
         window.electronAPI.retrieveSettings();
+
+        if (application)
+            application.onUpdateZoom(onChangeZoom);
 
         return () => {
             window.removeEventListener('paste', onPaste);
@@ -104,6 +109,13 @@ function App() {
         application.selectLayer(layerCount - 1);
     }
 
+    const onChangeZoom = (zoom: number, fromApplication: boolean): void => {
+        setCurrentZoom(zoom);
+
+        if (!fromApplication)
+            application.setZoom(zoom);
+    }
+
     const handleShowSettings = () => setShowSettingsModal(true);
 
     const handleToolSelected = (toolId: number): void => {
@@ -163,6 +175,12 @@ function App() {
 
             <div className='flex h-full w-full flex-1 relative'>
                 <Canvas application={application} />
+
+                <ZoomWidget
+                    onChangeZoom={onChangeZoom}
+                    currentZoom={currentZoom}
+                    inOverlayState={overlayState}
+                />
 
                 <Toolbar
                     onShowOptions={handleShowSettings}
