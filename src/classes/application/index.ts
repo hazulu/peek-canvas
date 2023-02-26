@@ -3,6 +3,7 @@ import { ShaderSystem } from "@pixi/core";
 import { install } from "@pixi/unsafe-eval";
 import { Viewport } from 'pixi-viewport'
 import FeatureApplicationCanvas from '../canvas'
+import { MAX_ZOOM, MIN_ZOOM } from '@/util/global';
 
 type FeatureApplicationOptions = {
 }
@@ -86,8 +87,8 @@ export default class FeatureApplication {
 
         viewport
             .clampZoom({
-                minScale: 0.25,
-                maxScale: 2,
+                minScale: MIN_ZOOM,
+                maxScale: MAX_ZOOM,
             })
             .drag({
                 mouseButtons: 'right'

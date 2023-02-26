@@ -4,6 +4,7 @@ import ZoomInIcon from 'Components/icons/zoom-in';
 import ZoomOutIcon from 'Components/icons/zoom-out';
 import WidgetContainer from '../widget-container';
 import { clamp } from '@/util/math';
+import { MAX_ZOOM, MIN_ZOOM } from '@/util/global';
 
 type ZoomWidgetProps = {
     onChangeZoom: Function,
@@ -14,13 +15,13 @@ type ZoomWidgetProps = {
 const ZoomWidget: FunctionComponent<ZoomWidgetProps> = ({ onChangeZoom, currentZoom, inOverlayState }: ZoomWidgetProps) => {
 
     const handleZoomIn = ():void => {
-        if (currentZoom >= 2) return;
-        onChangeZoom(clamp(currentZoom + 0.25, 0.25, 2), false);
+        if (currentZoom >= MAX_ZOOM) return;
+        onChangeZoom(clamp(currentZoom + MIN_ZOOM, MIN_ZOOM, MAX_ZOOM), false);
     }
 
     const handleZoomOut = ():void => {
-        if (currentZoom <= 0.25) return;
-        onChangeZoom(clamp(currentZoom - 0.25, 0.25, 2), false);
+        if (currentZoom <= MIN_ZOOM) return;
+        onChangeZoom(clamp(currentZoom - MIN_ZOOM, MIN_ZOOM, MAX_ZOOM), false);
     }
 
     return (
