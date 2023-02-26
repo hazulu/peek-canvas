@@ -6,3 +6,81 @@
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }
+
+/* Special styling for WebKit/Blink */
+input[type=range]::-webkit-slider-thumb {
+  width: 15px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 15px;
+  cursor: ew-resize;
+  background: #d4d4d4;
+  box-shadow: 0px 0px 6px 1px rgba(0,0,0,0.4);
+  border: 3px solid #f5f5f5;
+  border-radius: 50%;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 75ms;
+}
+
+/* All the same stuff for Firefox */
+input[type=range]::-moz-range-thumb {
+  width: 15px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 15px;
+  cursor: ew-resize;
+  background: #d4d4d4;
+  box-shadow: 0px 0px 6px 1px rgba(0,0,0,0.4);
+  border: 3px solid #f5f5f5;
+  border-radius: 50%;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 75ms;
+}
+
+/* All the same stuff for IE */
+input[type=range]::-ms-thumb {
+  width: 15px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 15px;
+  cursor: ew-resize;
+  background: #d4d4d4;
+  box-shadow: 0px 0px 6px 1px rgba(0,0,0,0.4);
+  border: 3px solid #f5f5f5;
+  border-radius: 50%;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 75ms;
+}
+
+input[type=range]:hover::-webkit-slider-thumb {
+  /* background: #0ea5e9; */
+  border-color: #a3a3a3;
+}
+
+input[type=range]:hover::-moz-range-thumb {
+  /* background: #0ea5e9; */
+  border-color: #a3a3a3;
+}
+
+input[type=range]:hover::-ms-thumb {
+  /* background: #0ea5e9; */
+  border-color: #a3a3a3;
+}
+
+input[type=range]:active::-webkit-slider-thumb {
+  /* background: #0ea5e9; */
+  border-color: #0ea5e9;
+}
+
+input[type=range]:active::-moz-range-thumb {
+  /* background: #0ea5e9; */
+  border-color: #0ea5e9;
+}
+
+input[type=range]:active::-ms-thumb {
+  /* background: #0ea5e9; */
+  border-color: #0ea5e9;
+}

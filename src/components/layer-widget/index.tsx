@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FunctionComponent } from 'react';
+import WidgetContainer from '../widget-container';
 import ToolbarButton from '../toolbar-button';
 import LayersIcon from 'Components/icons/layers';
 import TrashIcon from 'Components/icons/trash';
@@ -22,23 +23,21 @@ const LayerWidget: FunctionComponent<LayerWidgetProps> = ({ selectedLayer = 0, l
     const handleLayerDelete = () => onLayerDeleted(selectedLayer);
 
     return (
-        <div data-enabled={!inOverlayState} className="block transition-all duration-75 absolute bottom-2 right-2 select-none opacity-0 data-[enabled=true]:opacity-100">
-            <div className="flex flex-row bg-neutral-700 border border-neutral-500 p-2 rounded-lg space-x-2 select-none shadow-md text-neutral-50">
-                <ToolbarButton onClick={handleLayerCycle}>
+        <WidgetContainer className='absolute bottom-2 right-2' spacingClassName='flex-row space-x-2' inOverlayState={inOverlayState}>
+            <ToolbarButton onClick={handleLayerCycle}>
+                <div className='flex'>
+                    <div className="font-semibold">{layerCount === 0 ? 0 : selectedLayer + 1} / {layerCount}</div>
+                    <LayersIcon className="ml-2 w-6 h-6" />
+                </div>
+            </ToolbarButton>
+            {layerCount > 0 && (
+                <ToolbarButton onClick={handleLayerDelete}>
                     <div className='flex'>
-                        <div className="font-semibold">{layerCount === 0 ? 0 : selectedLayer + 1} / {layerCount}</div>
-                        <LayersIcon className="ml-2 w-6 h-6" />
+                        <TrashIcon className="w-6 h-6" />
                     </div>
                 </ToolbarButton>
-                { layerCount > 0 && (
-                    <ToolbarButton onClick={handleLayerDelete}>
-                        <div className='flex'>
-                            <TrashIcon className="w-6 h-6" />
-                        </div>
-                    </ToolbarButton>
-                )}
-            </div>
-        </div>
+            )}
+        </WidgetContainer>
     )
 }
 
