@@ -4,6 +4,7 @@ import { install } from "@pixi/unsafe-eval";
 import { Viewport } from 'pixi-viewport'
 import FeatureApplicationCanvas from '../canvas'
 import { MAX_ZOOM, MIN_ZOOM } from '@/util/global';
+import { ApplicationSaveData } from '@/types/canvas';
 
 type FeatureApplicationOptions = {
 }
@@ -276,6 +277,35 @@ export default class FeatureApplication {
 
     setZoom(zoom: number): void {
         this.#viewport.setZoom(zoom, true);
+    }
+
+    getApplicationSaveData(): ApplicationSaveData {
+        return {
+            layerData: this.#canvas.getCanvasSaveData(),
+            viewport: {
+                zoom: this.#viewport.scale.x,
+                position: {
+                    x: this.#viewport.position.x,
+                    y: this.#viewport.position.y
+                }
+            }
+        };
+    }
+
+    loadApplicationSaveData(saveData: ApplicationSaveData): void {
+        if (saveData.layerData) {
+            saveData.layerData.forEach(layer => {
+                const id = this.#canvas.addImage(layer.position as Point, layer.imageDataBase64);
+                this.#canvas.setLayerScale(layer.scale, id - 1);
+            });
+        }
+        if (saveData.viewport) {
+            const { position: { x, y }, zoom } = saveData.viewport;
+            this.#viewport.position.set(x, y);
+            this.#viewport.setZoom(zoom);
+            if (this.#updateZoomEvent)
+                this.#updateZoomEvent(zoom);
+        }
     }
 
     update() : void {
