@@ -1,8 +1,10 @@
-import { app, BrowserWindow, shell, ipcMain, globalShortcut } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, globalShortcut, dialog, Menu } from 'electron'
 import { release } from 'node:os'
 import { join } from 'node:path'
 import { getOrInitializeSettings, UserSettings } from '../services/settings'
+import fs from 'fs';
 import Store from 'electron-store';
+import { applicationMenu, onSaveProject } from '../menu';
 
 // The built directory structure
 //
@@ -61,7 +63,7 @@ async function createWindow() {
       contextIsolation: true,
     },
   });
-  win.setMenu(null);
+  win.setMenu(applicationMenu);
 
   var splash = new BrowserWindow({
     width: 640, 
@@ -163,6 +165,8 @@ const registerListeners = (window: BrowserWindow) : void => {
     if (overlayOpacity)
       store.set('overlayOpacity', overlayOpacity);
   });
+
+  ipcMain.on('send-save-data', (event, data) => onSaveProject(event, data, win));
 
   globalShortcut.register('Alt+CommandOrControl+O', () => {
 

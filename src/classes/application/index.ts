@@ -293,6 +293,10 @@ export default class FeatureApplication {
     }
 
     loadApplicationSaveData(saveData: ApplicationSaveData): void {
+        this.#canvas.reset();
+        this.#viewport.position.set(0, 0);
+        this.#viewport.setZoom(1);
+
         if (saveData.layerData) {
             saveData.layerData.forEach(layer => {
                 const id = this.#canvas.addImage(layer.position as Point, layer.imageDataBase64);
