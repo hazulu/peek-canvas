@@ -60,9 +60,17 @@ function App() {
     }
 
     const handleNewProject = (event: string): void => {
-        application.reset();
-        setLayerCount(0);
-        setSelectedLayer(0);
+        const layersInfo = application.reset();
+
+        if (layersInfo) {
+            const {
+                layerCount,
+                selectedLayer,
+            } = layersInfo;
+
+            setLayerCount(layerCount);
+            setSelectedLayer(selectedLayer);
+        }
     }
 
     const handleOpenProject = (event: string, saveData: ApplicationSaveData): void => {

@@ -5,6 +5,7 @@ import { Viewport } from 'pixi-viewport'
 import FeatureApplicationCanvas from '../canvas'
 import { MAX_ZOOM, MIN_ZOOM } from '@/util/global';
 import { ApplicationSaveData } from '@/types/canvas';
+import { applicationLayersState } from '@/types/application';
 
 type FeatureApplicationOptions = {
 }
@@ -112,11 +113,18 @@ export default class FeatureApplication {
         this.#application.stop();
     }
 
-    reset(): void {
+    reset(): applicationLayersState | undefined {
         this.#canvas.reset();
         this.#viewport.position.set(0, 0);
         this.#viewport.setZoom(1);
         this.#selectedLayer = 0;
+        if (this.#updateZoomEvent)
+            this.#updateZoomEvent(1);
+
+        return {
+            layerCount: 0,
+            selectedLayer: 0
+        }
     }
 
     getApplicationView(): HTMLWebViewElement {
@@ -234,7 +242,7 @@ export default class FeatureApplication {
         this.#selectedLayer = layerId;
     }
 
-    deleteLayer(layerId: number) {
+    deleteLayer(layerId: number): applicationLayersState | undefined {
         if (layerId >= this.getLayerCount()) return;
 
         const newLayerCount = this.#canvas.removeLayer(layerId);
@@ -298,7 +306,7 @@ export default class FeatureApplication {
         };
     }
 
-    loadApplicationSaveData(saveData: ApplicationSaveData) {
+    loadApplicationSaveData(saveData: ApplicationSaveData): applicationLayersState {
         this.#canvas.reset();
         this.#viewport.position.set(0, 0);
         this.#viewport.setZoom(1);
