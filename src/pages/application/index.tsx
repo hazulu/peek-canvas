@@ -27,6 +27,7 @@ function App() {
         window.addEventListener("paste", onPaste);
         const stopListeningToOverlayStateChange = window.electronAPI.handleOverlayStateChange(onOverlayStateChange);
         const stopListeningForSettings = window.electronAPI.handleRetrieveSettings(handleLoadSettings);
+        const stopListeningForNewProject = window.electronAPI.handleNewProject(handleNewProject);
         const stopListeningForOpenProject = window.electronAPI.handleOpenProject(handleOpenProject);
         const stopListeningForSaveRequests = window.electronAPI.handleRetrieveSaveData(handleGetSaveData);
         window.electronAPI.retrieveSettings();
@@ -38,6 +39,7 @@ function App() {
             window.removeEventListener('paste', onPaste);
             stopListeningToOverlayStateChange();
             stopListeningForSettings();
+            stopListeningForNewProject();
             stopListeningForOpenProject();
             stopListeningForSaveRequests();
         };

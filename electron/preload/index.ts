@@ -11,6 +11,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener('load-settings', callback);
     };
   },
+  handleNewProject: (callback) => {
+    ipcRenderer.on('new-project', callback);
+    return () => {
+      ipcRenderer.removeListener('new-project', callback);
+    };
+  },
   handleOpenProject: (callback) => {
     ipcRenderer.on('open-project', callback);
     return () => {

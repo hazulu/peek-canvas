@@ -7,6 +7,10 @@ const applicationMenuTemplate = [
         submenu: [
             // isMac ? { role: 'close' } : { role: 'quit' }
             {
+                label: 'New...',
+                click: (manuItem, browserWindow, event) => handleNewProject(browserWindow),
+            },
+            {
                 label: 'Open...',
                 click: (manuItem, browserWindow, event) => handleOpenProject(browserWindow),
             },
@@ -28,6 +32,12 @@ const applicationMenuTemplate = [
 
 // Keep project paths for open project saving
 const currentProjectPath: Map<BrowserWindow, string> = new Map<BrowserWindow, string>();
+
+export const handleNewProject = (browserWindow: BrowserWindow) => {
+    browserWindow.webContents.send('new-project');
+    currentProjectPath.delete(browserWindow);
+    browserWindow.setTitle(`Peek Canvas`);
+}
 
 export const handleOpenProject = async (browserWindow): Promise<void> => {
     const dialogResult = await createOpenDialog(browserWindow);
