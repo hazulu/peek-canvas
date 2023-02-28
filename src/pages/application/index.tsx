@@ -59,8 +59,24 @@ function App() {
         setCanvasBackgroundColor(canvasBackgroundColor);
     }
 
+    const handleNewProject = (event: string): void => {
+        application.reset();
+        setLayerCount(0);
+        setSelectedLayer(0);
+    }
+
     const handleOpenProject = (event: string, saveData: ApplicationSaveData): void => {
-        application.loadApplicationSaveData(saveData);
+        const layersInfo = application.loadApplicationSaveData(saveData);
+
+        if (layersInfo) {
+            const {
+                layerCount,
+                selectedLayer,
+            } = layersInfo;
+
+            setLayerCount(layerCount);
+            setSelectedLayer(selectedLayer);
+        }
     }
 
     const handleGetSaveData = (event: string, saveType: saveType): void => {

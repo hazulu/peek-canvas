@@ -104,14 +104,19 @@ export default class FeatureApplication {
 
     start(onComplete: Function): void {
         this.ready = true;
-        // this.centerViewport();
-        // this.viewport.setZoom(2);
         onComplete(this.getApplicationView());
     }
 
     stop(): void {
         this.ready = false;
         this.#application.stop();
+    }
+
+    reset(): void {
+        this.#canvas.reset();
+        this.#viewport.position.set(0, 0);
+        this.#viewport.setZoom(1);
+        this.#selectedLayer = 0;
     }
 
     getApplicationView(): HTMLWebViewElement {
@@ -282,6 +287,7 @@ export default class FeatureApplication {
     getApplicationSaveData(): ApplicationSaveData {
         return {
             layerData: this.#canvas.getCanvasSaveData(),
+            selectedLayer: this.#selectedLayer,
             viewport: {
                 zoom: this.#viewport.scale.x,
                 position: {
@@ -292,7 +298,7 @@ export default class FeatureApplication {
         };
     }
 
-    loadApplicationSaveData(saveData: ApplicationSaveData): void {
+    loadApplicationSaveData(saveData: ApplicationSaveData) {
         this.#canvas.reset();
         this.#viewport.position.set(0, 0);
         this.#viewport.setZoom(1);
@@ -303,12 +309,19 @@ export default class FeatureApplication {
                 this.#canvas.setLayerScale(layer.scale, id - 1);
             });
         }
+        if (saveData.selectedLayer)
+            this.#selectedLayer = saveData.selectedLayer;
         if (saveData.viewport) {
             const { position: { x, y }, zoom } = saveData.viewport;
             this.#viewport.position.set(x, y);
             this.#viewport.setZoom(zoom);
             if (this.#updateZoomEvent)
                 this.#updateZoomEvent(zoom);
+        }
+
+        return {
+            layerCount: this.#canvas.getLayerCount(),
+            selectedLayer: this.#selectedLayer
         }
     }
 

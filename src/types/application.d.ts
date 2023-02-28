@@ -3,3 +3,8 @@ export enum saveType {
     SaveAs,
     SaveCopy
 }
+
+export type applicationLayersState = {
+    layerCount: number,
+    selectedLayer: number,
+}

@@ -9,6 +9,7 @@ export type LayerSaveData = {
 
 export type ApplicationSaveData = {
     layerData: Array<LayerSaveData>,
+    selectedLayer: number,
     viewport: {
         position: {
             x: number,
