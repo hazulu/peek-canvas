@@ -8,6 +8,8 @@ import LayerWidget from "Components/layer-widget";
 import SettingsModal from '@/components/settings';
 import { UserSettingChanges } from '@/types/settings';
 import ZoomWidget from '@/components/zoom-widget';
+import { ApplicationSaveData } from '@/types/canvas';
+import { saveType } from '@/types/application';
 
 const application = new FeatureApplication(600, 400, {})
 
@@ -25,6 +27,9 @@ function App() {
         window.addEventListener("paste", onPaste);
         const stopListeningToOverlayStateChange = window.electronAPI.handleOverlayStateChange(onOverlayStateChange);
         const stopListeningForSettings = window.electronAPI.handleRetrieveSettings(handleLoadSettings);
+        const stopListeningForNewProject = window.electronAPI.handleNewProject(handleNewProject);
+        const stopListeningForOpenProject = window.electronAPI.handleOpenProject(handleOpenProject);
+        const stopListeningForSaveRequests = window.electronAPI.handleRetrieveSaveData(handleGetSaveData);
         window.electronAPI.retrieveSettings();
 
         if (application)
@@ -34,6 +39,9 @@ function App() {
             window.removeEventListener('paste', onPaste);
             stopListeningToOverlayStateChange();
             stopListeningForSettings();
+            stopListeningForNewProject();
+            stopListeningForOpenProject();
+            stopListeningForSaveRequests();
         };
     }, []);
 
@@ -51,6 +59,38 @@ function App() {
 
         setOverlayOpacity(overlayOpacity);
         setCanvasBackgroundColor(canvasBackgroundColor);
+    }
+
+    const handleNewProject = (event: string): void => {
+        const layersInfo = application.reset();
+
+        if (layersInfo) {
+            const {
+                layerCount,
+                selectedLayer,
+            } = layersInfo;
+
+            setLayerCount(layerCount);
+            setSelectedLayer(selectedLayer);
+        }
+    }
+
+    const handleOpenProject = (event: string, saveData: ApplicationSaveData): void => {
+        const layersInfo = application.loadApplicationSaveData(saveData);
+
+        if (layersInfo) {
+            const {
+                layerCount,
+                selectedLayer,
+            } = layersInfo;
+
+            setLayerCount(layerCount);
+            setSelectedLayer(selectedLayer);
+        }
+    }
+
+    const handleGetSaveData = (event: string, saveType: saveType): void => {
+        window.electronAPI.sendSaveData({ saveData: application.getApplicationSaveData(), saveType });
     }
 
     const onOverlayStateChange = (e: string, overlayState: boolean) => setOverlayState(overlayState);
@@ -76,7 +116,6 @@ function App() {
                 break;
             case 'O':
             case 'o':
-                // open options
                 break;
             case '[':
                 nextLayer = selectedLayer - 1;

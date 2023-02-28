@@ -4,6 +4,8 @@ import { install } from "@pixi/unsafe-eval";
 import { Viewport } from 'pixi-viewport'
 import FeatureApplicationCanvas from '../canvas'
 import { MAX_ZOOM, MIN_ZOOM } from '@/util/global';
+import { ApplicationSaveData } from '@/types/canvas';
+import { applicationLayersState } from '@/types/application';
 
 type FeatureApplicationOptions = {
 }
@@ -103,14 +105,26 @@ export default class FeatureApplication {
 
     start(onComplete: Function): void {
         this.ready = true;
-        // this.centerViewport();
-        // this.viewport.setZoom(2);
         onComplete(this.getApplicationView());
     }
 
     stop(): void {
         this.ready = false;
         this.#application.stop();
+    }
+
+    reset(): applicationLayersState | undefined {
+        this.#canvas.reset();
+        this.#viewport.position.set(0, 0);
+        this.#viewport.setZoom(1);
+        this.#selectedLayer = 0;
+        if (this.#updateZoomEvent)
+            this.#updateZoomEvent(1);
+
+        return {
+            layerCount: 0,
+            selectedLayer: 0
+        }
     }
 
     getApplicationView(): HTMLWebViewElement {
@@ -228,7 +242,7 @@ export default class FeatureApplication {
         this.#selectedLayer = layerId;
     }
 
-    deleteLayer(layerId: number) {
+    deleteLayer(layerId: number): applicationLayersState | undefined {
         if (layerId >= this.getLayerCount()) return;
 
         const newLayerCount = this.#canvas.removeLayer(layerId);
@@ -276,6 +290,47 @@ export default class FeatureApplication {
 
     setZoom(zoom: number): void {
         this.#viewport.setZoom(zoom, true);
+    }
+
+    getApplicationSaveData(): ApplicationSaveData {
+        return {
+            layerData: this.#canvas.getCanvasSaveData(),
+            selectedLayer: this.#selectedLayer,
+            viewport: {
+                zoom: this.#viewport.scale.x,
+                position: {
+                    x: this.#viewport.position.x,
+                    y: this.#viewport.position.y
+                }
+            }
+        };
+    }
+
+    loadApplicationSaveData(saveData: ApplicationSaveData): applicationLayersState {
+        this.#canvas.reset();
+        this.#viewport.position.set(0, 0);
+        this.#viewport.setZoom(1);
+
+        if (saveData.layerData) {
+            saveData.layerData.forEach(layer => {
+                const id = this.#canvas.addImage(layer.position as Point, layer.imageDataBase64);
+                this.#canvas.setLayerScale(layer.scale, id - 1);
+            });
+        }
+        if (saveData.selectedLayer)
+            this.#selectedLayer = saveData.selectedLayer;
+        if (saveData.viewport) {
+            const { position: { x, y }, zoom } = saveData.viewport;
+            this.#viewport.position.set(x, y);
+            this.#viewport.setZoom(zoom);
+            if (this.#updateZoomEvent)
+                this.#updateZoomEvent(zoom);
+        }
+
+        return {
+            layerCount: this.#canvas.getLayerCount(),
+            selectedLayer: this.#selectedLayer
+        }
     }
 
     update() : void {

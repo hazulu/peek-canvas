@@ -11,6 +11,27 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener('load-settings', callback);
     };
   },
+  handleNewProject: (callback) => {
+    ipcRenderer.on('new-project', callback);
+    return () => {
+      ipcRenderer.removeListener('new-project', callback);
+    };
+  },
+  handleOpenProject: (callback) => {
+    ipcRenderer.on('open-project', callback);
+    return () => {
+      ipcRenderer.removeListener('open-project', callback);
+    };
+  },
+  handleRetrieveSaveData: (callback) => {
+    ipcRenderer.on('retrieve-save-data', callback);
+    return () => {
+      ipcRenderer.removeListener('retrieve-save-data', callback);
+    };
+  },
+  sendSaveData: (saveData) => {
+    ipcRenderer.send('send-save-data', saveData);
+  },
   saveSettings: (settings) => {
     ipcRenderer.send('save-settings', settings);
   },
