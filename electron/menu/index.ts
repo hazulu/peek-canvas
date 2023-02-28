@@ -147,7 +147,6 @@ const createOpenDialog = (browserWindow: BrowserWindow) => dialog.showOpenDialog
 });
 
 const saveFile = async (filePath: string, fileData) => {
-    console.log(filePath);
     fs.writeFile(filePath, fileData, (err) => {
         if (err)
             return dialog.showErrorBox('Error', err.message);

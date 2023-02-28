@@ -116,7 +116,6 @@ function App() {
                 break;
             case 'O':
             case 'o':
-                console.log(application.getApplicationSaveData());
                 break;
             case '[':
                 nextLayer = selectedLayer - 1;
